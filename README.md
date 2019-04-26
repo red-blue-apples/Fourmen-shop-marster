@@ -70,13 +70,13 @@ Fourmen Mall warehouse
 
 ​	函数名：shopcar
 
-​	负责人：李嘉棣 
+​	负责人：孔广华 
 
 收货地址
 
 ​	函数名:info
 
-​	负责人：孔广华
+​	负责人：李嘉棣
 
 提交订单
 
