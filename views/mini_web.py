@@ -84,7 +84,7 @@ def shopcar():
 def reg():
 
     # 1. 获取对应的html模板
-    with mini_open("/shopcar.html") as f:
+    with mini_open("/reg.html") as f:
         content = f.read()
 
 
