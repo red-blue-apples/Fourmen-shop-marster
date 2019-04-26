@@ -82,13 +82,42 @@ def shopcar():
 
 @route(r"/reg\.html")
 def reg():
+    """
+    username 用户名
+    password 密码
+    confirm 确认密码
 
+    :return:
+    """
     # 1. 获取对应的html模板
     with mini_open("/reg.html") as f:
         content = f.read()
 
 
     return content
+@route(r"/reg_now\.html")
+def reg_now(pots):
+    # 连接数据库
+
+    # 检测是用户名是否存在
+
+    # 添加到数据库
+    username = pots["username"]
+    password = pots["password"]
+    return "获取到的用户名：%s 密码：%s"%(username,password)
+
+
+@route(r"/checks\.html")
+def checks(pots):
+    # 连接数据库
+
+    # 检测是用户名是否存在
+
+    # 添加到数据库
+    username = pots["username"]
+    password = pots["password"]
+    return "获取到的用户名：%s 密码：%s"%(username,password)
+
 
 def application(env, call_func):
     """
@@ -100,10 +129,6 @@ def application(env, call_func):
     # 2.0 提取url中的路径
     file_path = env["PATH_INFO"]  # "/login.html"
 
-    print("\n\n")
-    print("------------1------start---------")
-    print(URL_ROUTE)
-    print("------------1------stop---------")
 
     # 2.1 提取函数引用
     for url, func in URL_ROUTE.items():
@@ -118,15 +143,22 @@ def application(env, call_func):
             print("\n\n\n\n")
             print("url:", file_path)
             print(func.__name__)
-            print(func.__code__.co_argcount)
+            if env["MODE"] == "HTTP":
+                paraments = []  # 用来存储从正则表达式中提取出来的数据
+                for i in range(func.__code__.co_argcount):
+                    paraments.append(ret.group(1+i))
 
-            paraments = []  # 用来存储从正则表达式中提取出来的数据
-            for i in range(func.__code__.co_argcount):
-                paraments.append(ret.group(1+i))
+                # 调用函数 正则表达式方式加参数
+                response_body = func(*paraments)  # response_body = login("/login.html")
 
-            # 调用函数
-            response_body = func(*paraments)  # response_body = login("/login.html")
-            break
+                break
+
+            elif env["MODE"] == "POST":
+                pots = env["POST"]
+                # 这是POTS请求 传入POST传入的信息
+                response_body = func(pots)
+                break
+
     else:
         # 没有匹配成功
         # 回调 call_func变量指向的函数，并且将 状态码以及header传递过去
@@ -135,5 +167,7 @@ def application(env, call_func):
         func = URL_ROUTE.get("404", lambda x: "not found you page ,404")
         response_body = func(file_path)
 
-    # 返回数据给web服务器
+        # 返回数据给web服务器
     return response_body
+
+

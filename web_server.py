@@ -7,7 +7,6 @@ import re
 import multiprocessing
 import sys
 
-
 # 定义一个全局变量，用来存储查找web框架的路径
 VIEWS_PATH = "./views"
 # 定义一个全局变量，用来存储将来返回给浏览器静态资源文件的路径
@@ -44,25 +43,22 @@ class Server(object):
         # 1. 接收
         recv_content = client_socket.recv(1024).decode("utf-8", errors="ignore")
 
-        print("-----接收到的数据如下----：")
+        # print("-----接收到的数据如下----：")
         # print(recv_content)
         lines = recv_content.splitlines()  # 将接收到的http的request请求数据按照行进行切割到一个列表中
         # for line in lines:
         #     print("---")
-        #     print(line)
 
         # 2. 处理请求
         # 提取出浏览器发送过来的request中的路径
         # GET / HTTP/1.1
         # GET /index.html HTTP/1.1
-        # .......
-        lines[0]
 
         # 提取出/index.html 或者 /
         request_file_path = re.match(r"[^/]+(/[^ ]*)", lines[0]).group(1)
-
-        print("----提出来的请求路径是：----")
-        print(request_file_path)
+        #
+        # print("----提出来的请求路径是：----")
+        # print(request_file_path)
 
         # 完善对方访问主页的情况，如果只有/那么就认为浏览器要访问的是主页
         if request_file_path == "/":
@@ -97,10 +93,28 @@ class Server(object):
                 # 3.2 给浏览器回送对应的数据
                 client_socket.send(response)
         else:
-            # 如果是以.py结尾的请求，那么就进行动态生成页面内容
+            print("收到的请求头")
+            print(recv_content)
+            # 如果是以.html结尾的请求，那么就进行动态生成页面内容
 
             env = dict()  # 定义个字典，用来封装数据，然后传递到application函数中
             env["PATH_INFO"] = request_file_path  # "/login.py"
+            env["MODE"] = "HTTP"
+            print(lines[0])
+            # 如果是 POST 请求
+
+            if  re.match("POST",lines[0]):
+                env["MODE"] = "POST" # 向框架表明是POTS数据
+                print(env["MODE"])
+                pots = lines[-1]  # 可以取到pots内容
+                pots = pots.split("&")  # 切割成 ["xxx=xxx","xxx=xxx"]
+                # 这是一个储存 传输内容的字典
+                post_dict = dict()
+                # 开始添加到新字典
+                for i in pots:
+                    i = i.split("=")  # i = ["username",["123456"]]
+                    post_dict[i[0]] = i[1] # 变成{"username":"123456"}
+                env["POST"] = post_dict
 
             response_boy = self.app(env, self.set_status_headers)
 
@@ -129,8 +143,6 @@ class Server(object):
         while True:
             # 4. 等待客户端的链接
             client_socket, client_info = self.tcp_server_socket.accept()
-
-            print(client_info)  # 打印 当前是哪个客户端进行了请求
 
             # 5. 为客户端服务
             # handle_request(client_socket)
