@@ -1,12 +1,8 @@
 import re
 import time
-
-# 导入urllib3模块 便于修改密码
-import urllib3
 import pymysql
 from urllib.parse import unquote
 from contextlib import contextmanager
-
 
 
 # 定义一个字典，用来存储 url以及对应的func 的对应关系，key：url， value：func
@@ -18,8 +14,6 @@ URL_ROUTE = dict()
 
 # 定义一个全局变量，用来存储 找html页面时的路径
 TEMPLATES_PATH = "./templates"
-
-
 
 
 @contextmanager
@@ -36,9 +30,7 @@ def route(url):  # "/login.py"
 
         def call_func(*args, **kwargs):
             return func(*args, **kwargs)
-
         return call_func
-
     return set_func
 
 
@@ -67,44 +59,47 @@ def page_404():
 
 @route(r"/index\.html")
 def index():
+
     # 1. 获取对应的html模板
     with mini_open("/index.html") as f:
         content = f.read()
+
 
     return content
 
 
 @route(r"/login\.html")
 def login():
+
     # 1. 获取对应的html模板
     with mini_open("/login.html") as f:
         content = f.read()
 
-    return content
 
+    return content
 
 @route(r"/member\.html")
 def member():
+
     # 1. 获取对应的html模板
     with mini_open("/member.html") as f:
         content = f.read()
 
-    return content
 
+    return content
 
 @route(r"/shopcar\.html")
 def shopcar():
+
     # 1. 获取对应的html模板
     with mini_open("/shopcar.html") as f:
         content = f.read()
 
-    return content
 
+    return content
 
 @route(r"/reg\.html")
 def reg():
-<<<<<<< HEAD
-=======
     """
     username 用户名
     password 密码
@@ -112,19 +107,10 @@ def reg():
 
     :return:
     """
->>>>>>> 819fec99e65dfb242afd214f2f243dd31b8d1a84
     # 1. 获取对应的html模板
     with mini_open("/reg.html") as f:
         content = f.read()
 
-    return content
-
-
-@route(r"/pwd\.html")
-def reg():
-    # 1. 获取对应的html模板
-    with mini_open("/pwd.html") as f:
-        content = f.read()
 
     return content
 @route(r"/reg_now\.html")
@@ -149,12 +135,6 @@ def checks(pots):
     username = pots["username"]
     password = pots["password"]
     return "获取到的用户名：%s 密码：%s"%(username,password)
-
-
-@route(r"/pwdok\.html")
-def pwdok():
-    """确认修改密码时，调用此函数"""
-
 
 
 def application(env, call_func):
@@ -189,11 +169,6 @@ def application(env, call_func):
                 # 调用函数 正则表达式方式加参数
                 response_body = func(*paraments)  # response_body = login("/login.html")
 
-<<<<<<< HEAD
-            paraments = []  # 用来存储从正则表达式中提取出来的数据
-            for i in range(func.__code__.co_argcount):
-                paraments.append(ret.group(1 + i))
-=======
                 break
 
             elif env["MODE"] == "POST":
@@ -201,7 +176,6 @@ def application(env, call_func):
                 # 这是POTS请求 传入POST传入的信息
                 response_body = func(pots)
                 break
->>>>>>> 819fec99e65dfb242afd214f2f243dd31b8d1a84
 
     else:
         # 没有匹配成功
@@ -213,5 +187,3 @@ def application(env, call_func):
 
         # 返回数据给web服务器
     return response_body
-
-
