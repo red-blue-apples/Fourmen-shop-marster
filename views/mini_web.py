@@ -51,35 +51,44 @@ def index():
 
 
 @route(r"/login\.html")
-def index():
+def login():
 
     # 1. 获取对应的html模板
-    with mini_open("/index.html") as f:
+    with mini_open("/login.html") as f:
         content = f.read()
 
 
     return content
 
 @route(r"/member\.html")
-def index():
+def member():
 
     # 1. 获取对应的html模板
-    with mini_open("/index.html") as f:
+    with mini_open("/member.html") as f:
         content = f.read()
 
 
     return content
 
 @route(r"/shopcar\.html")
-def index():
+def shopcar():
 
     # 1. 获取对应的html模板
-    with mini_open("/index.html") as f:
+    with mini_open("/shopcar.html") as f:
         content = f.read()
 
 
     return content
 
+@route(r"/reg\.html")
+def reg():
+
+    # 1. 获取对应的html模板
+    with mini_open("/shopcar.html") as f:
+        content = f.read()
+
+
+    return content
 
 def application(env, call_func):
     """
