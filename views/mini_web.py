@@ -34,6 +34,24 @@ def route(url):  # "/login.py"
     return set_func
 
 
+@route(r"/shopcar\.html")
+def shopcar():
+    """
+    购物车
+    :return:
+    """
+    pass
+
+
+@route(r"/info\.html")
+def payply():
+    """
+    提交订单
+    :return:
+    """
+    pass
+
+
 @route("404")
 def page_404():
     return "404，当前时间是：%s" % time.ctime()
