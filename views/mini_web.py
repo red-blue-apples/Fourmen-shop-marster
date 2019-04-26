@@ -46,188 +46,39 @@ def index():
     with mini_open("/index.html") as f:
         content = f.read()
 
-    # 2. 查询数据
-    db = pymysql.connect(host='localhost', port=3306, user='root', password='python', database='stock_db', charset='utf8')
-    cursor = db.cursor()
-    sql = """select * from info;"""
-    cursor.execute(sql)
-    data_from_mysql = cursor.fetchall()
-    cursor.close()
-    db.close()
-
-    # print("\n\n")
-    # print(data_from_mysql)
-
-    html_template = """
-                    <tr>
-                        <td>{0[0]}</td>
-                        <td>{0[1]}</td>
-                        <td>{0[2]}</td>
-                        <td>{0[3]}</td>
-                        <td>{0[4]}</td>
-                        <td>{0[5]}</td>
-                        <td>{0[6]}</td>
-                        <td>{0[7]}</td>
-                        <td>
-                            <input type="button" value="添加" id="toAdd" name="toAdd" systemidvaule="{0[1]}">
-                        </td>
-                    </tr>
-                    """
-
-    # 定义一个变量，用来存储查询出来的数据最终要组成的样子的html
-    html = ""
-    # 循环的次数是根据从MySQL查询出来的记录的个数决定，例如从MySQL中查出来10个记录，那么样子就像((), (), () .... ())
-    for one_stock in data_from_mysql:
-        html += html_template.format(one_stock)
-
-    # 3. 将查询的数据替换到html模板中
-    content = re.sub(r"\{% content %\}", html, content)
 
     return content
 
 
-@route(r"/center\.html")
-def center():
-    # 1. 读取对应HTML模板的数据
-    with mini_open("/center.html") as f:
+@route(r"/login\.html")
+def index():
+
+    # 1. 获取对应的html模板
+    with mini_open("/index.html") as f:
         content = f.read()
 
-    # 2. 从MySQL中查询数据
-    db = pymysql.connect(host='localhost', port=3306, user='root', password='python', database='stock_db', charset='utf8')
-    cursor = db.cursor()
-    sql = """select i.code,i.short,i.chg,i.turnover,i.price,i.highs,j.note_info from info as i inner join focus as j on i.id=j.info_id;"""
-    cursor.execute(sql)
-    data_from_mysql = cursor.fetchall()
-    cursor.close()
-    db.close()
-
-    # 3. 找到每行的模板
-    html_template = """
-                    <tr>
-                        <td>{0[0]}</td>
-                        <td>{0[1]}</td>
-                        <td>{0[2]}</td>
-                        <td>{0[3]}</td>
-                        <td>{0[4]}</td>
-                        <td>{0[5]}</td>
-                        <td>{0[6]}</td>
-                        <td>
-                            <a type="button" class="btn btn-default btn-xs" href="/update/{0[0]}.html"> <span class="glyphicon glyphicon-star" aria-hidden="true"></span> 修改 </a>
-                        </td>
-                        <td>
-                            <input type="button" value="删除" id="toDel" name="toDel" systemidvaule="{0[0]}">
-                        </td>
-                    </tr>
-                    """
-
-    # 3. 替换
-    html = ""
-    for one_stock_info in data_from_mysql:
-        html += html_template.format(one_stock_info)
-
-    # 通过正则表达式替换 html模板中 变量
-    content = re.sub(r"\{% content %\}", html, content)
 
     return content
 
+@route(r"/member\.html")
+def index():
 
-@route(r"/update/(\d+)\.html")
-def show_update_page(stock_code):
-    # 1. 读取HTML模板数据
-    with mini_open("/update.html") as f:
+    # 1. 获取对应的html模板
+    with mini_open("/index.html") as f:
         content = f.read()
 
-    # 2. 查询数据库
-    # 链接数据库，并查询需要的数据
-    db = pymysql.connect(host='localhost', port=3306, user='root', password='python', database='stock_db', charset='utf8')
-    cursor = db.cursor()
-    sql = """select focus.note_info from focus inner join info on focus.info_id=info.id where info.code=%s;"""
-    cursor.execute(sql, [stock_code])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
-    stock_note_info = cursor.fetchone()
-    cursor.close()
-    db.close()
-
-    print("------->>>>>>", stock_note_info)
-
-    # 3. 替换html中的模板变量
-    content = re.sub(r"\{% code %\}", stock_code, content)
-    content = re.sub(r"\{% note_info %\}", stock_note_info[0], content)
 
     return content
 
+@route(r"/shopcar\.html")
+def index():
 
-@route(r"/update/(\d*)/(.*)\.html")
-def commit_update_page(stock_code, stock_comment):
-    """进行数据的真正更新"""
-
-    # 先对url数据激进型解码
-    stock_comment = unquote(stock_comment)
-
-    # 数据库进行修改
-    db = pymysql.connect(host='localhost', port=3306, user='root', password='python', database='stock_db', charset='utf8')
-    cursor = db.cursor()
-    sql = """update focus inner join info on focus.info_id=info.id set focus.note_info=%s where info.code=%s;"""
-    cursor.execute(sql, [stock_comment, stock_code])
-    db.commit()
-    cursor.close()
-    db.close()
-
-    return "修改成功"
+    # 1. 获取对应的html模板
+    with mini_open("/index.html") as f:
+        content = f.read()
 
 
-@route(r"/add/(\d+)\.html")
-def add_focus(stock_code):
-    """
-    添加关注
-    :param stock_code:
-    :return:
-    """
-
-    # 链接数据库，将要关注的股票信息添加到focus数据表
-    db = pymysql.connect(host='localhost', port=3306, user='root', password='python', database='stock_db', charset='utf8')
-    cursor = db.cursor()
-    # 判断是否已经关注
-    sql = """select * from focus inner join info on focus.info_id=info.id where info.code=%s;"""
-    cursor.execute(sql, [stock_code])
-    if cursor.fetchone():
-        cursor.close()
-        db.close()
-        return "已经关注过了，请不要重复关注"
-
-    # 如果没有关注，那么就进行关注
-    sql = """insert into focus (info_id) select id from info where code=%s;"""
-    cursor.execute(sql, [stock_code])
-    db.commit()
-    cursor.close()
-    db.close()
-    return "关注成功"
-
-
-@route(r"/del/(\d+)\.html")
-def del_focus(stock_code):
-    """
-    取消关注
-    :return:
-    """
-    db = pymysql.connect(host='localhost', port=3306, user='root', password='python', database='stock_db', charset='utf8')
-    cursor = db.cursor()
-
-    # 判断是否已经关注
-    sql = """select * from focus inner join info on focus.info_id=info.id where info.code=%s;"""
-    cursor.execute(sql, [stock_code])
-    if not cursor.fetchone():
-        cursor.close()
-        db.close()
-        return "并没有关注，为什么要取消关注呢？不理解，啦啦啦。。。"
-
-    # 如果有关注，那么就进行取消关注
-    sql = """delete from focus where info_id = (select id from info where code=%s);"""
-    cursor.execute(sql, [stock_code])
-    db.commit()
-    cursor.close()
-    db.close()
-
-    return "取消关注成功"
+    return content
 
 
 def application(env, call_func):

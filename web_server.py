@@ -11,7 +11,7 @@ import sys
 # 定义一个全局变量，用来存储查找web框架的路径
 VIEWS_PATH = "./views"
 # 定义一个全局变量，用来存储将来返回给浏览器静态资源文件的路径
-STATIC_PATH = "."
+STATIC_PATH = "./static"
 
 
 class Server(object):
