@@ -1,8 +1,12 @@
 import re
 import time
+
+# 导入urllib3模块 便于修改密码
+import urllib3
 import pymysql
 from urllib.parse import unquote
 from contextlib import contextmanager
+
 
 
 # 定义一个字典，用来存储 url以及对应的func 的对应关系，key：url， value：func
@@ -14,6 +18,8 @@ URL_ROUTE = dict()
 
 # 定义一个全局变量，用来存储 找html页面时的路径
 TEMPLATES_PATH = "./templates"
+
+
 
 
 @contextmanager
@@ -30,7 +36,9 @@ def route(url):  # "/login.py"
 
         def call_func(*args, **kwargs):
             return func(*args, **kwargs)
+
         return call_func
+
     return set_func
 
 
@@ -41,54 +49,62 @@ def page_404():
 
 @route(r"/index\.html")
 def index():
-
     # 1. 获取对应的html模板
     with mini_open("/index.html") as f:
         content = f.read()
-
 
     return content
 
 
 @route(r"/login\.html")
 def login():
-
     # 1. 获取对应的html模板
     with mini_open("/login.html") as f:
         content = f.read()
 
-
     return content
+
 
 @route(r"/member\.html")
 def member():
-
     # 1. 获取对应的html模板
     with mini_open("/member.html") as f:
         content = f.read()
 
-
     return content
+
 
 @route(r"/shopcar\.html")
 def shopcar():
-
     # 1. 获取对应的html模板
     with mini_open("/shopcar.html") as f:
         content = f.read()
 
-
     return content
+
 
 @route(r"/reg\.html")
 def reg():
-
     # 1. 获取对应的html模板
     with mini_open("/shopcar.html") as f:
         content = f.read()
 
+    return content
+
+
+@route(r"/pwd\.html")
+def reg():
+    # 1. 获取对应的html模板
+    with mini_open("/pwd.html") as f:
+        content = f.read()
 
     return content
+
+@route(r"/pwdok\.html")
+def pwdok():
+    """确认修改密码时，调用此函数"""
+
+
 
 def application(env, call_func):
     """
@@ -122,7 +138,7 @@ def application(env, call_func):
 
             paraments = []  # 用来存储从正则表达式中提取出来的数据
             for i in range(func.__code__.co_argcount):
-                paraments.append(ret.group(1+i))
+                paraments.append(ret.group(1 + i))
 
             # 调用函数
             response_body = func(*paraments)  # response_body = login("/login.html")
