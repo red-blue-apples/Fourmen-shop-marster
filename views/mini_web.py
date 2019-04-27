@@ -34,22 +34,81 @@ def route(url):  # "/login.py"
     return set_func
 
 
-@route(r"/shopcar\.html")
-def shopcar():
-    """
-    购物车
-    :return:
-    """
-    pass
-
-
-@route(r"/info\.html")
+@route(r"/payply\.html")
 def payply():
     """
     提交订单
     :return:
     """
     pass
+
+
+@route(r"/info\.html")
+def info():
+    """
+    收货地址
+    :return:
+    """
+    # 1. 获取对应的html模板
+    with mini_open("/index.html") as f:
+        content = f.read()
+
+    # 从MySQL中查询数据
+    address = pymysql.connect(host="localhost", port="8080", user="root", password="123456", database="", charset="utf8")
+    cursor = address.cursor()
+    # sql语句
+    sql = "update "
+    # 执行sql语句
+    cursor.execute(sql)
+    data_from_mysql = cursor.fetchall()
+    cursor.close()
+    address.close()
+
+    # 找到模板
+    html_template = """
+                    <dd>
+                        <div class="item">
+                            <span><font>*</font>"所在地区："</span>
+                            <select><option>广东省</option></select>
+                            <select><option>深圳市</option></select>
+                            <input type="tex" class="txt">
+                        </div>
+                        <div class="item"><span>
+                            <font>*</font>"邮政编码："
+                        </span>
+                            <input type="tex" class="txt">
+                        </div>
+                        <div class="item"><table width="100%" border="0" cellpadding="0">
+                            <tbody><tr>
+                                <td width="8%">
+                                    <span><font>*</font>"详细地址："</span>
+                                </td>
+                                <td width="92%"><textarea style="margin: 0px; height: 125px; width: 437px;"></textarea></td>
+                            </tr></tbody>
+                        </table></div>
+                        <div class="item"><span><font>*</font>"收货人姓名："</span>
+                            <input type="tex" class="txt">
+                        </div>
+                        <div class="item"><span><font>*</font>"手机："</span>
+                            <input type="tex" class="txt">
+                        </div>
+                        <div class="item"><span><font>*</font>"电话："
+                            <input type="tex class="txt">
+                        </span></div>
+                        <div class="item"><input type="submit" class="sub" value="保存收货人信息"></div>
+                    </dd>
+    
+    """
+
+    # 3. 替换
+    html = ""
+    for one_stock_info in data_from_mysql:
+        html += html_template.format(one_stock_info)
+
+    # 通过正则表达式替换 html模板中 变量
+    content = re.sub(r"\{% content %\}", html, content)
+
+    return content
 
 
 @route("404")
