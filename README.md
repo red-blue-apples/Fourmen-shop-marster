@@ -29,6 +29,33 @@ Fourmen Mall warehouse
 
 ​	负责人：白少凡
 
+​	备注    ：用户输入数据 点击 确认修改
+​		       python web 获取form数据  将原密码与数据库对比
+​		       默认正确后 判断新密码 与 确认密码
+​		       默认正确后 修改数据库密码
+​		       提示用户修改成功
+​		       跳转登录页面
+
+​			（登录密码由8-20位数字、字母、[特殊字符](https://www.baidu.com/s?wd=%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6&tn=SE_PcZhidaonwhc_ngpagmjz&rsv_dl=gh_pc_zhidao)组成）
+
+​	使用urllib3模块修改数据：
+
+​				1、 线程安全
+
+　　　　　　　　　　2、 连接池
+
+　　　　　　　　　　3、 客户端SSL/TLS验证
+
+　　　　　　　　　　4、 文件分部编码上传
+
+　　　　　　　　　　5、 协助处理重复请求和HTTP重定位
+
+　　　　　　　　　　6、 支持压缩编码
+
+　　　　　　　　　　7、 支持HTTP和SOCKS代理
+
+　　　　　　　　　　8、 100%测试覆盖率
+
 会员中心	
 
 ​	函数名：member
