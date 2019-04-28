@@ -42,8 +42,11 @@ def shopcar():
     :return:
     """
     # 1. 获取对应的html模板
-    with mini_open("/shopcar.html") as f:
-        content = f.read()
+    # with mini_open("/shopcar.html") as f:
+    #     content = f.read()
+    print("===")
+    # 跳转页面
+    info()
 
 
 @route(r"/info\.html")
@@ -57,12 +60,8 @@ def info():
         content = f.read()
 
     # 从MySQL中查询数据
-<<<<<<< HEAD
     address = pymysql.connect(host="localhost", port="8080", user="root", password="123456", database="adderss", charset="utf8")
-=======
-    address = pymysql.connect(host="localhost", port="3306", user="root", password="201314", database="",
-                              charset="utf8")
->>>>>>> 6dee32ca44a91ea8370a9bbfdfe5d04a706c8c45
+
     cursor = address.cursor()
     # sql语句
     sql = """update adderss """
