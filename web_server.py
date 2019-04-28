@@ -44,7 +44,6 @@ class Server(object):
         recv_content = client_socket.recv(1024).decode("utf-8", errors="ignore")
 
         # print("-----接收到的数据如下----：")
-        print(recv_content)
         lines = recv_content.splitlines()  # 将接收到的http的request请求数据按照行进行切割到一个列表中
         # for line in lines:
         #     print("---")
@@ -102,7 +101,10 @@ class Server(object):
             env = dict()  # 定义个字典，用来封装数据，然后传递到application函数中
             env["PATH_INFO"] = request_file_path  # "/login.py"
             env["MODE"] = "HTTP"
-            print(lines[0])
+            for i in lines:
+                if "Cookie" in i:
+                    env["COOKIE"] = i
+                    break
             # 如果是 POST 请求
 
             if  re.match("POST",lines[0]):
