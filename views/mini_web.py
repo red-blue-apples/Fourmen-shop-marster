@@ -134,8 +134,8 @@ def login():
     with mini_open("/login.html") as f:
         content = f.read()
 
-
     return content
+
 
 @route(r"/member\.html")
 def member():
@@ -144,8 +144,8 @@ def member():
     with mini_open("/member.html") as f:
         content = f.read()
 
-
     return content
+
 
 @route(r"/shopcar\.html")
 def shopcar():
@@ -153,7 +153,6 @@ def shopcar():
     # 1. 获取对应的html模板
     with mini_open("/shopcar.html") as f:
         content = f.read()
-
 
     return content
 
@@ -170,8 +169,8 @@ def reg():
     with mini_open("/reg.html") as f:
         content = f.read()
 
-
     return content
+
 @route(r"/reg_now\.html")
 def reg_now(pots):
     # 连接数据库
