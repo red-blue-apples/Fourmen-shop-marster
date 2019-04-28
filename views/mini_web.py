@@ -2,13 +2,14 @@ import re
 import time
 import pymysql
 from urllib.parse import unquote
+import requests
 from contextlib import contextmanager
 
 # 定义一个字典，用来存储 url以及对应的func 的对应关系，key：url， value：func
 URL_ROUTE = dict()
 # {
 #     r"/update/\d+.html": show_update_page,
-# }
+# }+-
 
 
 # 定义一个全局变量，用来存储 找html页面时的路径
@@ -20,6 +21,16 @@ def mini_open(file_path, model="r"):
     f = open(TEMPLATES_PATH + file_path, model, encoding="utf-8")
     yield f
     f.close()
+
+
+def redirect(call_func):
+    """
+    检测没有登录就返回到登录界面
+    :return:
+    """
+    call_func("302 Temporarily Moved",
+              [("Content-Type", "text/html;charset=utf-8"), ("framework", "mini_web"), ("Location", "./login.html")])
+    return "302"
 
 
 def route(url):  # "/login.py"
@@ -138,16 +149,32 @@ def page_404():
 
 
 @route(r"/index\.html")
-def index():
-    # 1. 获取对应的html模板
-    with mini_open("/index.html") as f:
-        content = f.read()
+def index(cookie,call_func):
+    if cookie:
+        cookie = cookie.split("'")
+        cookie = cookie[1]
+        # 1. 获取对应的html模板
+        db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
+                             charset='utf8')
+        cursor = db.cursor()
+        sql = """select user_info.name from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
+        cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        name = cursor.fetchone()
+        cursor.close()
+        db.close()
 
-    return content
+        with mini_open("/index.html") as f:
+            content = f.read()
 
+            content = re.sub(r"\{% name %\}",name[0],content)
+
+        return content
+    else:
+        redirect(call_func)
+        return "302"
 
 @route(r"/login\.html")
-def login():
+def login(*args):
     # 1. 获取对应的html模板
     with mini_open("/login.html") as f:
         content = f.read()
@@ -174,7 +201,7 @@ def shopcar():
 
 
 @route(r"/reg\.html")
-def reg():
+def reg(*args):
     """
     username 用户名
     password 密码
@@ -189,14 +216,13 @@ def reg():
     return content
 
 @route(r"/reg_now\.html")
-def reg_now(pots):
+def reg_now(pots, call_func):
+    # 301重定向
     # 获取用户名和密码 然后转码
     username = pots["username"]
     username = unquote(username)
     password = pots["password"]
     password = unquote(password)
-
-
     # 连接数据库
     db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
                          charset='utf8')
@@ -214,13 +240,14 @@ def reg_now(pots):
     # 连接数据库
     db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
                          charset='utf8')
+    cursor = db.cursor()
     # 添加到数据库
     sql = "insert into user values(0,%s,%s);"
     # 执行sql语句
     cursor.execute(sql, [username, password])
     db.commit()
     sql = """select id from user where user_name=%s;"""
-    cursor.execute(sql,username)
+    cursor.execute(sql, username)
     id = cursor.fetchone()
     sql = "insert into user_info values(0,'新用户',null,'男',%s,null,null,null);"
     # 执行sql语句
@@ -232,13 +259,19 @@ def reg_now(pots):
 
 
 @route(r"/checks\.html")
-def checks(pots):
+def checks(pots, call_func):
+    """
+    登录点击之后事件处理
+    :param pots:
+    :return:
+    """
 
     # 获取用户名和密码 然后转码
     username = pots["username"]
     username = unquote(username)
     password = pots["password"]
     password = unquote(password)
+
     # 连接数据库
     db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
                          charset='utf8')
@@ -246,13 +279,115 @@ def checks(pots):
     cursor = db.cursor()
 
     # 检测是用户名是否存在
-    sql = """select * from user where user_name=%s and password=%s;"""
-    cursor.execute(sql, [username,password])
-    if cursor.fetchone():
+    sql = """select id from user where user_name=%s and password=%s;"""
+    cursor.execute(sql, [username, password])
+    login_info = cursor.fetchone()
+    if login_info:
         cursor.close()
         db.close()
-        return index()
-    return "获取到的用户名：%s 密码：%s 在数据库中不存在" % (username, password)
+        cookie = "id='%s'" % login_info[0]
+        call_func("302 Temporarily Moved",
+                  [("Content-Type", "text/html;charset=utf-8"), ("framework", "mini_web"), ("Location", "./index.html"),
+                   ("Set-cookie", cookie)])
+        set_cookie(cookie, login_info[0])
+
+        return "302"
+    call_func("302 Temporarily Moved",
+              [("Content-Type", "text/html;charset=utf-8"), ("framework", "mini_web"), ("Location", "./login.html")])
+    ret = "<script>alert('用户名或密码错误')</script>"
+
+    return ret
+
+
+def set_cookie(cookie, id):
+    print(cookie)
+    cookie = cookie.split("'")
+    cookie = cookie[1]
+    db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+    cursor = db.cursor()
+    sql = """select * from cookie where cookie=%s;"""
+    cursor.execute(sql, cookie)
+    cookie_temp = cursor.fetchone()
+    print(cookie_temp)
+    if cookie_temp:
+        print("数据存在")
+        cursor.close()
+        db.close()
+        # 存在直接返回 不写入到数据库
+        return
+
+    db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+    cursor = db.cursor()
+    # 添加到数据库
+    sql = "insert into cookie values(0,%s,%s);"
+    # 执行sql语句
+    cursor.execute(sql, [cookie, id])
+    db.commit()
+    # 关闭数据库
+    cursor.close()
+    db.close()
+
+
+
+@route(r"/pwd\.html")
+def pwd(cookie,call_func):
+    """
+    old_password 原密码
+    new_password 密码
+    confirm 确认密码
+
+    :return:
+    """
+    # 1. 获取对应的html模板
+    with mini_open("/pwd.html") as f:
+        content = f.read()
+
+    return content
+
+
+@route(r"/pwd_ok\.html")
+def pwd_ok(post):
+    """
+    old_password 原密码
+    new_password 密码
+    confirm 确认密码
+
+    :return:
+    """
+    # 获取修改网页密码信息
+    print("==============")
+    print(post)
+    print("==============")
+    # 链接数据库，获取游标
+    db = pymysql.connect(host='192.168.14.53', port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+    cursor = db.cursor()
+    # 打印数据库用户列表信息
+    sql_user = "select * from user;"
+    cursor.execute(sql_user)
+    sql_user_table = cursor.fetchall()
+    print("==============")
+    print(sql_user_table)
+    print("==============")
+    # 获取指定id=1的用户 密码
+    sql = "select password from user where id=1;"
+    cursor.execute(sql)
+    sql_password = cursor.fetchall()
+    print("------>数据库密码", sql_password)
+    old_password = post['old_password']
+    print("------>用户输入原始密码", old_password)
+    # 将数据库用户密码与网页修改密码进行判断
+    if sql_password[0][0] != old_password:
+        return "原密码错误，当前时间是: %s" % time.ctime()
+    else:
+        print("原始密码确认成功")
+        # 修改指定id=1的用户 密码
+        new_password = post['new_password']
+        sql = "update user set password=%s where id=1;"
+        cursor.execute(sql, [new_password])
+        print("用户数据库密码修改成功")
 
 
 def application(env, call_func):
@@ -275,23 +410,19 @@ def application(env, call_func):
             # 回调 call_func变量指向的函数，并且将 状态码以及header传递过去
             call_func("200 OK", [("Content-Type", "text/html;charset=utf-8"), ("framework", "mini_web")])
 
-            print("\n\n\n\n")
-            print("url:", file_path)
-            print(func.__name__)
             if env["MODE"] == "HTTP":
-                paraments = []  # 用来存储从正则表达式中提取出来的数据
-                for i in range(func.__code__.co_argcount):
-                    paraments.append(ret.group(1 + i))
 
+                cookie = env.get("COOKIE", None)
                 # 调用函数 正则表达式方式加参数
-                response_body = func(*paraments)  # response_body = login("/login.html")
+                response_body = func(cookie, call_func)  # response_body = login("/login.html")
 
                 break
 
             elif env["MODE"] == "POST":
+
                 pots = env["POST"]
                 # 这是POTS请求 传入POST传入的信息
-                response_body = func(pots)
+                response_body = func(pots, call_func)
                 break
 
     else:

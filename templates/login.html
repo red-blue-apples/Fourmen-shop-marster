@@ -7,30 +7,7 @@
     <link href="css/style.css" type="text/css" rel="stylesheet"/>
     <script src="js/jquery-1.5.1.js">
     </script>
-    <script>
-        $(document).ready(function () {
 
-
-            $("#submit").click(function () {
-                user = $("#username").val()
-                pass = $("#password").val()
-                if (user.length < 6 || pass.length < 6) {
-                    alert("用户名或密码长度低于6位")
-                } else {
-
-                    $.post("./checks.html",
-                        {
-                            username: user,
-                            password: pass
-                        },
-                        function (data, status) {
-                            alert("请求返回值：" + data + "\n状态：" + status);
-                        });
-                }
-
-            });
-        });
-    </script>
 </head>
 <body class="member">
 
@@ -54,15 +31,15 @@
     <div class="w1185">
         <form action="./checks.html" class="form" method="post">
             <p class="p01"><span>会员登录</span><a href="./reg.html">免费注册</a></p>
-            <p class="p02"><input type="text" id="username" value="账户名" name="" class="txt"
+            <p class="p02"><input type="text" id="username" value="账户名" name="username" class="txt"
                                   onfocus="if(value=='账户名') {value=''}"
                                   onblur="if(value=='') {value='账户名'}"/></p>
-            <p class="p03"><input type="text" id="password" value="密码" name="" class="txt"
+            <p class="p03"><input type="text" id="password" value="密码" name="password" class="txt"
                                   onfocus="if(value=='密码') {value=''}"
                                   onblur="if(value=='') {value='密码'}"/></p>
             <p class="p04"><span class="sp01"><input type="checkbox" name=""/>自动登录</span><span class="sp02">忘记密码？点击<a
                     href="#">找回密码</a></span></p>
-            <p class="p05"><input type="button" id="submit" value="立即登陆" class="sub"/></p>
+            <p class="p05"><input type="submit" id="submit" value="立即登陆" class="sub"/></p>
             <p class="p06">使用合作网站账号登录：</p>
             <p class="p07"><a href="#" class="a01"></a><a href="#" class="a02"></a><a href="#" class="a03"></a></p>
         </form>
