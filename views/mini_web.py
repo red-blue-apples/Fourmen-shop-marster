@@ -46,13 +46,18 @@ def route(url):  # "/login.py"
     return set_func
 
 
-@route(r"/payply\.html")
-def payply():
+@route(r"/shopcar\.html")
+def shopcar():
     """
-    提交订单
+    购物车
     :return:
     """
-    pass
+    # 1. 获取对应的html模板
+    # with mini_open("/shopcar.html") as f:
+    #     content = f.read()
+    print("===")
+    # 跳转页面
+    info()
 
 
 @route(r"/info\.html")
@@ -62,15 +67,15 @@ def info():
     :return:
     """
     # 1. 获取对应的html模板
-    with mini_open("/index.html") as f:
+    with mini_open("/info.html") as f:
         content = f.read()
 
     # 从MySQL中查询数据
-    address = pymysql.connect(host="localhost", port="3306", user="root", password="201314", database="",
-                              charset="utf8")
+    address = pymysql.connect(host="localhost", port="8080", user="root", password="123456", database="adderss", charset="utf8")
+
     cursor = address.cursor()
     # sql语句
-    sql = "update "
+    sql = """update adderss """
     # 执行sql语句
     cursor.execute(sql)
     data_from_mysql = cursor.fetchall()
@@ -122,6 +127,15 @@ def info():
     content = re.sub(r"\{% content %\}", html, content)
 
     return content
+
+
+@route(r"/payply\.html")
+def payply():
+    """
+    提交订单
+    :return:
+    """
+    pass
 
 
 @route("404")

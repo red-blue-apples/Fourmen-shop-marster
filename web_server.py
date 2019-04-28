@@ -106,8 +106,8 @@ class Server(object):
                     env["COOKIE"] = i
                     break
             # 如果是 POST 请求
-
-            if  re.match("POST",lines[0]):
+            
+            if re.match("POST",lines[0]):
                 env["MODE"] = "POST" # 向框架表明是POTS数据
                 print(env["MODE"])
                 pots = lines[-1]  # 可以取到pots内容
