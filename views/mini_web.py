@@ -207,7 +207,7 @@ def reg_now(pots):
         cursor.close()
         db.close()
         # 存在直接返回 不写入到数据库
-        return "账号已存在"
+        return "0"
     # 连接数据库
     db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
                          charset='utf8')
@@ -216,15 +216,21 @@ def reg_now(pots):
     # 执行sql语句
     cursor.execute(sql, [username, password])
     db.commit()
+    sql = """select id from user where user_name=%s;"""
+    cursor.execute(sql,username)
+    id = cursor.fetchone()
+    sql = "insert into user_info values(0,'新用户',null,'男',%s,null,null,null);"
+    # 执行sql语句
+    cursor.execute(sql, [id])
     cursor.close()
     db.close()
     # 已经写入到数据库 返回给浏览器结果
-    return "获取到的用户名：%s 密码：%s" % (username, password)
+    return "1"
 
 
 @route(r"/checks\.html")
 def checks(pots):
- 
+
     # 获取用户名和密码 然后转码
     username = pots["username"]
     username = unquote(username)
@@ -242,7 +248,7 @@ def checks(pots):
     if cursor.fetchone():
         cursor.close()
         db.close()
-        return "登录成功"
+        return index()
     return "获取到的用户名：%s 密码：%s 在数据库中不存在" % (username, password)
 
 
@@ -290,8 +296,8 @@ def application(env, call_func):
         # 回调 call_func变量指向的函数，并且将 状态码以及header传递过去
         call_func("404 Not Found", [("Content-Type", "text/html;charset=utf-8"), ("framework", "mini_web")])
         # 如果浏览器请求的url没有在 路由映射字典中找到，那么就返回一个默认的404处理函数
-        func = URL_ROUTE.get("404", lambda x: "not found you page ,404")
-        response_body = func(file_path)
+        func = URL_ROUTE.get("404", lambda: "not found you page ,404")
+        response_body = func()
 
         # 返回数据给web服务器
     return response_body

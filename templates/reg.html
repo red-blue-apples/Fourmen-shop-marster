@@ -26,8 +26,16 @@
                             password: pass
                         },
                         function (data, status) {
-                            alert("请求返回值：" + data + "\n状态：" + status);
+                            if (data === "0") {
+                                alert("账号已经存在");
+                            } else {
+                                alert("注册成功");
+
+                                window.location.replace("./login.html");
+                            }
                         });
+
+
                 }
 
             });
