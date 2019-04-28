@@ -60,8 +60,13 @@ def info():
         content = f.read()
 
     # 从MySQL中查询数据
+<<<<<<< HEAD
     address = pymysql.connect(host="localhost", port="8080", user="root", password="123456", database="adderss", charset="utf8")
 
+=======
+    address = pymysql.connect(host="localhost", port="3306", user="root", password="201314", database="",
+                              charset="utf8")
+>>>>>>> 985f2c4c25a180515aab9568d8fd4296457f4ef2
     cursor = address.cursor()
     # sql语句
     sql = """update adderss """
@@ -182,7 +187,6 @@ def reg():
         content = f.read()
 
     return content
-
 
 @route(r"/reg_now\.html")
 def reg_now(pots):
