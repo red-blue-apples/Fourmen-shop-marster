@@ -4,7 +4,6 @@ import pymysql
 from urllib.parse import unquote
 from contextlib import contextmanager
 
-
 # 定义一个字典，用来存储 url以及对应的func 的对应关系，key：url， value：func
 URL_ROUTE = dict()
 # {
@@ -30,7 +29,9 @@ def route(url):  # "/login.py"
 
         def call_func(*args, **kwargs):
             return func(*args, **kwargs)
+
         return call_func
+
     return set_func
 
 
@@ -54,7 +55,8 @@ def info():
         content = f.read()
 
     # 从MySQL中查询数据
-    address = pymysql.connect(host="localhost", port="8080", user="root", password="123456", database="", charset="utf8")
+    address = pymysql.connect(host="localhost", port="3306", user="root", password="201314", database="",
+                              charset="utf8")
     cursor = address.cursor()
     # sql语句
     sql = "update "
@@ -118,44 +120,39 @@ def page_404():
 
 @route(r"/index\.html")
 def index():
-
     # 1. 获取对应的html模板
     with mini_open("/index.html") as f:
         content = f.read()
-
 
     return content
 
 
 @route(r"/login\.html")
 def login():
-
     # 1. 获取对应的html模板
     with mini_open("/login.html") as f:
         content = f.read()
 
-
     return content
+
 
 @route(r"/member\.html")
 def member():
-
     # 1. 获取对应的html模板
     with mini_open("/member.html") as f:
         content = f.read()
 
-
     return content
+
 
 @route(r"/shopcar\.html")
 def shopcar():
-
     # 1. 获取对应的html模板
     with mini_open("/shopcar.html") as f:
         content = f.read()
 
-
     return content
+
 
 @route(r"/reg\.html")
 def reg():
@@ -170,30 +167,68 @@ def reg():
     with mini_open("/reg.html") as f:
         content = f.read()
 
-
     return content
+
+
 @route(r"/reg_now\.html")
 def reg_now(pots):
+    # 获取用户名和密码 然后转码
+    username = pots["username"]
+    username = unquote(username)
+    password = pots["password"]
+    password = unquote(password)
+
+
     # 连接数据库
+    db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+    # 获取指针
+    cursor = db.cursor()
 
     # 检测是用户名是否存在
-
+    sql = """select * from user where user_name=%s;"""
+    cursor.execute(sql, username)
+    if cursor.fetchone():
+        cursor.close()
+        db.close()
+        # 存在直接返回 不写入到数据库
+        return "账号已存在"
+    # 连接数据库
+    db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
     # 添加到数据库
-    username = pots["username"]
-    password = pots["password"]
-    return "获取到的用户名：%s 密码：%s"%(username,password)
+    sql = "insert into user values(0,%s,%s);"
+    # 执行sql语句
+    cursor.execute(sql, [username, password])
+    db.commit()
+    cursor.close()
+    db.close()
+    # 已经写入到数据库 返回给浏览器结果
+    return "获取到的用户名：%s 密码：%s" % (username, password)
 
 
 @route(r"/checks\.html")
 def checks(pots):
+ 
+    # 获取用户名和密码 然后转码
+    username = pots["username"]
+    username = unquote(username)
+    password = pots["password"]
+    password = unquote(password)
     # 连接数据库
+    db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+
+    cursor = db.cursor()
 
     # 检测是用户名是否存在
-
-    # 添加到数据库
-    username = pots["username"]
-    password = pots["password"]
-    return "获取到的用户名：%s 密码：%s"%(username,password)
+    sql = """select * from user where user_name=%s and password=%s;"""
+    cursor.execute(sql, [username,password])
+    if cursor.fetchone():
+        cursor.close()
+        db.close()
+        return "登录成功"
+    return "获取到的用户名：%s 密码：%s 在数据库中不存在" % (username, password)
 
 
 def application(env, call_func):
@@ -205,7 +240,6 @@ def application(env, call_func):
     # 2. 根据映射的关系即URL_ROUTE这字典，根据不同的url请求调用对应的函数
     # 2.0 提取url中的路径
     file_path = env["PATH_INFO"]  # "/login.html"
-
 
     # 2.1 提取函数引用
     for url, func in URL_ROUTE.items():
@@ -223,7 +257,7 @@ def application(env, call_func):
             if env["MODE"] == "HTTP":
                 paraments = []  # 用来存储从正则表达式中提取出来的数据
                 for i in range(func.__code__.co_argcount):
-                    paraments.append(ret.group(1+i))
+                    paraments.append(ret.group(1 + i))
 
                 # 调用函数 正则表达式方式加参数
                 response_body = func(*paraments)  # response_body = login("/login.html")

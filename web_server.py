@@ -44,7 +44,7 @@ class Server(object):
         recv_content = client_socket.recv(1024).decode("utf-8", errors="ignore")
 
         # print("-----接收到的数据如下----：")
-        # print(recv_content)
+        print(recv_content)
         lines = recv_content.splitlines()  # 将接收到的http的request请求数据按照行进行切割到一个列表中
         # for line in lines:
         #     print("---")
@@ -55,11 +55,13 @@ class Server(object):
         # GET /index.html HTTP/1.1
 
         # 提取出/index.html 或者 /
-        request_file_path = re.match(r"[^/]+(/[^ ]*)", lines[0]).group(1)
+        try:
+            request_file_path = re.match(r"[^/]+(/[^ ]*)", lines[0]).group(1)
         #
         # print("----提出来的请求路径是：----")
         # print(request_file_path)
-
+        except Exception:
+            print("未知请求")
         # 完善对方访问主页的情况，如果只有/那么就认为浏览器要访问的是主页
         if request_file_path == "/":
             request_file_path = "/index.html"
