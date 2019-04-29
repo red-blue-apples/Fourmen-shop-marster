@@ -10,7 +10,7 @@ URL_ROUTE = dict()
 # {
 #     r"/update/\d+.html": show_update_page,
 # }+-
-DATABASE = '192.168.14.53'
+DATABASE = '127.0.0.1'
 
 # 定义一个全局变量，用来存储 找html页面时的路径
 TEMPLATES_PATH = "./templates"
@@ -72,11 +72,8 @@ def info():
 
     # 从MySQL中查询数据
 
-
-
-
-
-    address = pymysql.connect(host="localhost", port="8080", user="root", password="123456", database="adderss", charset="utf8")
+    address = pymysql.connect(host="localhost", port="8080", user="root", password="123456", database="adderss",
+                              charset="utf8")
 
     cursor = address.cursor()
     # sql语句
@@ -160,14 +157,164 @@ def index(cookie, call_func):
         sql = """select user_info.name from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
         cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
         name = cursor.fetchone()
-        cursor.close()
-        db.close()
 
+        """==============================pic1======================================"""
+        # 这里是 第一个pic的模板
+        sql = """select id,name,price,picimg,content from commoditys limit 4;"""
+        cursor.execute(sql)  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        pic_info = cursor.fetchall()
+        pic1_temp = """
+          <form action="./product_show.html" method="post" style="display:inline">
+            <li class="pic">
+                <p class="p01">{0[1]}</p>
+                    <p class="p02">
+                        <font>￥</font><b>{0[2]}</b><br/>
+                            <span>{0[1]}</span>
+                            <input type="hidden" name="id" value="{0[0]}">
+                            <input type="submit" value="立即购买" class="buy"/>
+                    </p>
+                            <img src="{0[3]}" />
+                    </li>
+                </form>
+                """
+        # 储存整体模板
+        pic1 = ""
+        # 获取商品信息
+        for info in pic_info:
+            pic1 += pic1_temp.format(info)
+
+
+        """==============================pic2======================================"""
+
+        pic2_temp_one = """
+        
+                    <div class="item big">
+                    <form action="./product_show.html" method="post">
+                    <input type="hidden" name="id" value="{0[0]}">
+                        <a href="#" class="title">{0[1]}</a>
+                        <p>
+                            <font>￥{0[2]}</font>
+                        </p>
+                        <input type="submit" value="" class="buy"/>
+                        <img src="{0[3]}" />
+                    </form>
+                    </div>
+        """
+        pic2_temp = """
+                    <div class="item">
+                        <form action="./product_show.html" method="post">
+                    <input type="hidden" name="id" value="{0[0]}">
+                        <a href="#" class="title">{0[1]}</a>
+                        <p>
+                            <font>￥{0[2]}</font>
+                        </p>
+                        <input type="submit" value="" class="buy"/>
+                        <img src="{0[3]}" style="width: 180px;" />
+                    </form>
+                    
+                    </div>
+        """
+
+        sql = """select id,name,price,picimg,content from commoditys where type=1;"""
+        cursor.execute(sql)  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        pic_info = cursor.fetchall()
+        pic2 = ""
+        pic2 += pic2_temp_one.format(pic_info[0])
+
+        for info in pic_info:
+
+            pic2 += pic2_temp.format(info)
+
+
+        """==============================pic3======================================"""
+
+        pic3_temp_one = """
+
+                            <div class="item item big" width="281px">
+                            <form action="./product_show.html" method="post">
+                            <input type="hidden" name="id" value="{0[0]}">
+                                <a href="#" class="title">{0[1]}</a>
+                                <p>
+                                    <font>￥{0[2]}</font>
+                                </p>
+                                <input type="submit" value="" class="buy"/>
+                                <img src="{0[3]}"/>
+                            </form>
+                            </div>
+                """
+        pic3_temp = """
+                            <div class="item"  width="281px">
+                                <form action="./product_show.html" method="post">
+                            <input type="hidden" name="id" value="{0[0]}">
+                                <a href="#" class="title">{0[1]}</a>
+                                <p>
+                                    <font>￥{0[2]}</font>
+                                </p>
+                                <input type="submit" value="" class="buy"/>
+                                <img src="{0[3]}" style="width: 180px;" />
+                            </form>
+
+                            </div>
+                """
+
+        sql = """select id,name,price,picimg,content from commoditys where type=3;"""
+        cursor.execute(sql)  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        pic_info = cursor.fetchall()
+        pic3 = ""
+        pic3 += pic3_temp_one.format(pic_info[0])
+
+        for info in pic_info:
+            pic3 += pic3_temp.format(info)
+
+        """==============================pic4======================================"""
+
+        pic4_temp_one = """
+
+                            <div class="item item big" width="281px">
+                            <form action="./product_show.html" method="post">
+                            <input type="hidden" name="id" value="{0[0]}">
+                                <a href="#" class="title">{0[1]}</a>
+                                <p>
+                                    <font>￥{0[2]}</font>
+                                </p>
+                                <input type="submit" value="" class="buy"/>
+                                <img src="{0[3]}"/>
+                            </form>
+                            </div>
+                """
+        pic4_temp = """
+                            <div class="item"  width="281px">
+                                <form action="./product_show.html" method="post">
+                            <input type="hidden" name="id" value="{0[0]}">
+                                <a href="#" class="title">{0[1]}</a>
+                                <p>
+                                    <font>￥{0[2]}</font>
+                                </p>
+                                <input type="submit" value="" class="buy"/>
+                                <img src="{0[3]}" style="width: 180px;" />
+                            </form>
+
+                            </div>
+                """
+
+        sql = """select id,name,price,picimg,content from commoditys where type=4;"""
+        cursor.execute(sql)  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        pic_info = cursor.fetchall()
+        pic4 = ""
+        pic4 += pic4_temp_one.format(pic_info[0])
+
+        for info in pic_info:
+            pic4 += pic4_temp.format(info)
         with mini_open("/index.html") as f:
             content = f.read()
 
             content = re.sub(r"\{% name %\}", name[0], content)
-
+            content = re.sub(r"\{% pic1 %\}", pic1, content)
+            content = re.sub(r"\{% pic2 %\}", pic2, content)
+            content = re.sub(r"\{% pic3 %\}", pic3, content)
+            content = re.sub(r"\{% pic4 %\}", pic4, content)
+        cursor.close()
+        db.close()
         return content
     else:
         redirect(call_func)
@@ -181,7 +328,59 @@ def login(*args):
         content = f.read()
 
     return content
+@route(r"/product\.html")
+def product(pots, cookie, call_func):
+    pots = pots["keyword"]
 
+    """
+    :return:
+    """
+    if cookie:
+        cookie = cookie.split("'")
+        cookie = cookie[1]
+        pro_temp = """
+        <div class="item">
+        <form action="./product_show.html" method="post">
+        <input type="hidden" name="id" value="{0[0]}">
+                <dl>
+                    <dt><img src="{0[3]}" /></dt>
+                    <dd>
+                        <img class="on" src="images/img/img39.jpg" /><img src="{0[3]}" /><img
+                            src="{0[3]}" />
+                    </dd>
+                </dl>
+                <p class="p01">
+                    <font>￥</font>{0[2]}</font>
+                </p>
+                <p class="p02"><input type="submit" value="{0[1]}"/></p>
+                <p class="p03"><span class="sp01">月销量：<b>0</b></span><span>评价：<strong>0</strong></span></p>
+            </form>
+            </div>
+        """
+        db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                             charset='utf8')
+        cursor = db.cursor()
+        sql = """select user_info.name from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
+        cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        name = cursor.fetchone()
+        pots = "%"+pots+"%"
+        sql = """select id,name,price,picimg,content from commoditys where name like %s;"""
+        cursor.execute(sql,pots)  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        pro_info = cursor.fetchall()
+        pro = ""
+        for info in pro_info:
+            pro += pro_temp.format(info)
+
+        with mini_open("/product.html") as f:
+            content = f.read()
+            print("=========",name)
+            content = re.sub(r"\{% name %\}", name[0], content)
+            content = re.sub(r"\{% pro_cont %\}", pro, content)
+
+
+        cursor.close()
+        db.close()
+        return content
 
 @route(r"/member\.html")
 def member(cookie, call_func):
@@ -234,6 +433,7 @@ def reg(*args):
         content = f.read()
 
     return content
+
 
 @route(r"/reg_now\.html")
 def reg_now(pots, cookie, call_func):
@@ -434,6 +634,86 @@ def pwd_ok(pots, cookie, call_func):
     """
 
 
+@route(r"/product_show\.html")
+def product_show(pots, cookie, call_func):
+    """
+    :param cookie: cookie记录登录状态和用户信息
+    :param call_func: 回调状态函数
+    :return:
+    """
+    print(pots)
+    if cookie:
+        cookie = cookie.split("'")
+        cookie = cookie[1]
+        pots = pots["id"]
+        # 1. 获取对应的html模板
+        db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                             charset='utf8')
+        cursor = db.cursor()
+        sql = """select user_info.name from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
+        cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        name = cursor.fetchone()
+        # 这里是 第一个pic的模板
+        sql = """select * from commoditys where id=%s;"""
+        cursor.execute(sql,pots)  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        pic_info = cursor.fetchall()
+        print(pic_info)
+
+        with mini_open("/product_show.html") as f:
+            content = f.read()
+            # 渲染名字
+            content = re.sub(r"\{% name %\}", name[0], content)
+            # 渲染商品图
+            content = re.sub(r"\{% img %\}", pic_info[0][4], content)
+            # 渲染简介
+            content = re.sub(r"\{% particulars %\}", pic_info[0][5], content)
+            # 渲染商品名称
+            content = re.sub(r"\{% cname %\}", pic_info[0][1], content)
+            # 渲染商品介绍
+            content = re.sub(r"\{% content %\}", pic_info[0][6], content)
+            # 渲染商品价格
+            price = str(pic_info[0][2])
+            content = re.sub(r"\{% price %\}", price, content)
+            sql = """select user_info.name from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
+            cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+            name = cursor.fetchone()
+            # 这里是 第一个pic的模板
+            sql = """select id,name,price,picimg,content from commoditys limit 4;"""
+            cursor.execute(sql)  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+            pic_info = cursor.fetchall()
+
+            left_temp = """
+            <form action="./product_show.html" method="post" style="display:inline">
+            <input type="hidden" name="id" value="{0[0]}">
+            <div class="item">
+                        	<ul>
+                                <li><img src="{0[3]}" id="submit" width="160" height="160"/></li>
+                                
+                                <li class="title"><input type="submit" value="{0[1]}" style="cursor:pointer;" /></li>
+                                <li class="price">￥{0[2]}</li>
+                            </ul>
+                        </div>
+                        
+            </form>
+            """
+            left = ""
+            # 获取商品信息
+
+            for info in pic_info:
+                left += left_temp.format(info)
+            content = re.sub(r"\{% left %\}", left, content)
+
+
+        cursor.close()
+        db.close()
+        return content
+    else:
+        redirect(call_func)
+        return "302"
+
+
+
+
 def application(env, call_func):
     """
     接收web服务器传递过来的 请求参数
@@ -459,7 +739,6 @@ def application(env, call_func):
                 cookie = env.get("COOKIE", None)
                 # 调用函数 正则表达式方式加参数
                 response_body = func(cookie, call_func)  # response_body = login("/login.html")
-
                 break
 
             elif env["MODE"] == "POST":
