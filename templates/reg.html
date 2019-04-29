@@ -18,6 +18,8 @@
                     alert("用户名或密码长度低于6位")
                 } else if (pass !== cm) {
                     alert("密码和确认密码不相同")
+                }else if($("#ok".val()!="ok")){
+                    alert("请查看免责条款 简言之你必须接受")
                 } else {
 
                     $.post("./reg_now.html",
@@ -77,7 +79,7 @@
                                                                             name="verification"
                                                                             class="txt txt2"/><img
                             src="images/code.jpg"/><a href="#">看不清?换一张</a></li>
-                    <li class="li01"><input type="checkbox" value="" name=""/>我已阅并同意<a rel="#">《易易城用户注册协议》</a></li>
+                    <li class="li01"><input type="checkbox" id="ok" value="ok" name="ok"/>我已阅并同意<a rel="#">《易易城用户注册协议》</a></li>
                     <li class="li02"><input type="button" id="submit" value="立即注册" class="sub"/></li>
                 </ul>
             </form>
