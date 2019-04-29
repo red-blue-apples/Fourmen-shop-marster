@@ -10,7 +10,7 @@ URL_ROUTE = dict()
 # {
 #     r"/update/\d+.html": show_update_page,
 # }+-
-
+DATABASE = '192.168.14.53'
 
 # 定义一个全局变量，用来存储 找html页面时的路径
 TEMPLATES_PATH = "./templates"
@@ -71,7 +71,8 @@ def info():
         content = f.read()
 
     # 从MySQL中查询数据
-    address = pymysql.connect(host="localhost", port="8080", user="root", password="123456", database="adderss", charset="utf8")
+    address = pymysql.connect(host=DATABASE, port=3306, user="root", password="201314", database="shop",
+                              charset="utf8")
 
     cursor = address.cursor()
     # sql语句
@@ -144,12 +145,12 @@ def page_404():
 
 
 @route(r"/index\.html")
-def index(cookie,call_func):
+def index(cookie, call_func):
     if cookie:
         cookie = cookie.split("'")
         cookie = cookie[1]
         # 1. 获取对应的html模板
-        db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
+        db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
                              charset='utf8')
         cursor = db.cursor()
         sql = """select user_info.name from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
@@ -161,12 +162,13 @@ def index(cookie,call_func):
         with mini_open("/index.html") as f:
             content = f.read()
 
-            content = re.sub(r"\{% name %\}",name[0],content)
+            content = re.sub(r"\{% name %\}", name[0], content)
 
         return content
     else:
         redirect(call_func)
         return "302"
+
 
 @route(r"/login\.html")
 def login(*args):
@@ -212,7 +214,7 @@ def reg(*args):
 
 
 @route(r"/reg_now\.html")
-def reg_now(pots, call_func):
+def reg_now(pots, cookie, call_func):
     # 301重定向
     # 获取用户名和密码 然后转码
     username = pots["username"]
@@ -255,7 +257,7 @@ def reg_now(pots, call_func):
 
 
 @route(r"/checks\.html")
-def checks(pots, call_func):
+def checks(pots, cookie, call_func):
     """
     登录点击之后事件处理
     :param pots:
@@ -326,9 +328,8 @@ def set_cookie(cookie, id):
     db.close()
 
 
-
 @route(r"/pwd\.html")
-def pwd(cookie,call_func):
+def pwd(cookie, call_func):
     """
     old_password 原密码
     new_password 密码
@@ -344,7 +345,47 @@ def pwd(cookie,call_func):
 
 
 @route(r"/pwd_ok\.html")
-def pwd_ok(post):
+def pwd_ok(pots, cookie, call_func):
+    # 判断是否有cookie
+    if cookie:
+        # 如果有 获取到值
+        cookie = cookie.split("'")
+        cookie = cookie[1]
+        # 1. 获取对应的html模板
+        # 链接数据库，获取游标
+        db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                             charset='utf8')
+        cursor = db.cursor()
+        # 打印数据库用户列表信息
+        sql_user = "select * from user;"
+        cursor.execute(sql_user)
+        sql_user_table = cursor.fetchall()
+        print("==============")
+        print(sql_user_table)
+        print("==============")
+        # 获取指定id=1的用户 密码
+        sql = "select password from user where id=%s;"
+        cursor.execute(sql,[cookie])
+        sql_password = cursor.fetchall()
+        print("------>数据库密码", sql_password)
+        old_password = pots['old_password']
+        print("------>用户输入原始密码", old_password)
+        # 将数据库用户密码与网页修改密码进行判断
+        if sql_password[0][0] != old_password:
+            return "原密码错误，当前时间是: %s" % time.ctime()
+        else:
+            print("原始密码确认成功")
+            # 修改指定id=1的用户 密码
+            new_password = pots['new_password']
+            sql = "update user set password=%s where id=1;"
+            cursor.execute(sql, [new_password])
+            print("用户数据库密码修改成功")
+
+        return "ok"
+    else:
+        redirect(call_func)
+        return "302"
+
     """
     old_password 原密码
     new_password 密码
@@ -352,38 +393,6 @@ def pwd_ok(post):
 
     :return:
     """
-    # 获取修改网页密码信息
-    print("==============")
-    print(post)
-    print("==============")
-    # 链接数据库，获取游标
-    db = pymysql.connect(host='192.168.14.53', port=3306, user='root', password='201314', database='shop',
-                         charset='utf8')
-    cursor = db.cursor()
-    # 打印数据库用户列表信息
-    sql_user = "select * from user;"
-    cursor.execute(sql_user)
-    sql_user_table = cursor.fetchall()
-    print("==============")
-    print(sql_user_table)
-    print("==============")
-    # 获取指定id=1的用户 密码
-    sql = "select password from user where id=1;"
-    cursor.execute(sql)
-    sql_password = cursor.fetchall()
-    print("------>数据库密码", sql_password)
-    old_password = post['old_password']
-    print("------>用户输入原始密码", old_password)
-    # 将数据库用户密码与网页修改密码进行判断
-    if sql_password[0][0] != old_password:
-        return "原密码错误，当前时间是: %s" % time.ctime()
-    else:
-        print("原始密码确认成功")
-        # 修改指定id=1的用户 密码
-        new_password = post['new_password']
-        sql = "update user set password=%s where id=1;"
-        cursor.execute(sql, [new_password])
-        print("用户数据库密码修改成功")
 
 
 def application(env, call_func):
@@ -415,10 +424,10 @@ def application(env, call_func):
                 break
 
             elif env["MODE"] == "POST":
-
                 pots = env["POST"]
                 # 这是POTS请求 传入POST传入的信息
-                response_body = func(pots, call_func)
+                cookie = env.get("COOKIE", None)
+                response_body = func(pots, cookie, call_func)
                 break
 
     else:
