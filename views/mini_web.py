@@ -255,7 +255,7 @@ def reg_now(pots, cookie, call_func):
         # 存在直接返回 不写入到数据库
         return "0"
     # 连接数据库
-    db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
+    db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
                          charset='utf8')
     cursor = db.cursor()
     # 添加到数据库
@@ -331,7 +331,7 @@ def set_cookie(cookie, id):
         # 存在直接返回 不写入到数据库
         return
 
-    db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
+    db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
                          charset='utf8')
     cursor = db.cursor()
     # 添加到数据库
