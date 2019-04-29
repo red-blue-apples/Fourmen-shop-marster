@@ -9,7 +9,7 @@
 <script type="text/javascript">
 	
 	$(function(){
-		changeTotal();
+        changeTotal();
 		
 		$(".sl-left").click(function(){
 			//获取输入框
@@ -18,7 +18,9 @@
 			var num = parseInt(input.val())-1;
 			//如果数量是0则删除当前商品
 			if(num <= 0){
-				$(this).parent().parent().remove();
+                $(this).parent().parent().remove();
+                // $("#change").text(0)
+                // $("#down").text(0)
 				changeTotal();
 				return;
 			}
@@ -32,14 +34,24 @@
 			var input = $(this).prev("input");
 			var num = parseInt(input.val())+1;
 			input.val(num);
-			changePrice(input,num);
-		})
-	})
-	
+            changePrice(input,num);
+            change_money(input,num)
+        })
+    })
 
+    $(function(){
+        $("#change").children().text(function(){
+            var input = $(".sl-left").next('input');
+            var input2 = $(".sl-right").next('input');
+            var num1 = Number(input.val());
+            var num2 = Number(input2.val())
+            var nums = num1+num2;
+            return nums;
+        })
+    })
 	
 	function changePrice(obj,num){
-		//修改金额
+        //修改金额
 		var span = $(obj).parent().prev(".mid-dj").children("span");
 		var price = parseInt(span.html());
 		var sub = num * price
@@ -48,38 +60,82 @@
 		$(obj).parent().nextAll(".mid-je").children("span").html(sub);
 		
 		changeTotal();
-	}
+    }
 	
 	//修改总价
 	function changeTotal(){
-		//获取所有价格
-		var total = 0;
+        //获取所有价格
+        setInterval(function(){
+        var total = 0;
 		$(".mid-je").children("span").each(function(){
-			var _num = parseInt($(this).html())
-			total+=_num;
+            var _num = parseInt($(this).html())
+            if("input[type='chekbox]:cheked"){
+                total+=_num;
+                //修改总价 
+                $(".jshj-p2").children("span").html(total);
+            }
 		})
+        })
 		
-		//修改总价 
-		$(".jshj-p2").children("span").html(total);
     }
 
 	// 购物车全选
 	$(function () {
 		$('.check_all').on('click', function () {
 			if (this.checked) {
-				$("input[name='sub']").attr('checked', true);
+                $("input[name='sub']").attr('checked', true);
+                
 			} else {
 				$("input[name='sub']").attr('checked', false);
 			}
 		});
     });
     
+    //增加
+    var num =1;
+    $('.add').click(function() {
+        num = $(this).siblings('input').val()
+        num++;
+        $(this).siblings('input').val(num);
+        //单个总价
+        var univalent = $(this).parent().siblings('.univalent').html();
+        // console.log(univalent);
+        $(this).parent().siblings('.total').html(univalent*num);
+        update();
+        });
+
     //删除
     $(function(){
-        $(".del").on("click", function(){
-            $("#del_o").
+        $(".delete").on("click", function(){
+            if("#del"){
+                $(this).parent().parent().remove();
+                // var num=-1
+                // $(".sl-left").next("input").val(num)
+            }
+            else if("#del_one"){
+                $(this).parent().parent().remove();
+                // var num=-1
+                // $(".sl-left").next("input").val(num)
+            }
         })
     })
+
+    // function change_money(obj,num){
+    //     if("input[type='checkbox']:checked".length<0){
+    //         $("#change").children().text("0")
+    //         $("#down").children().text("0")
+    //     }
+    // }
+    
+    //删除选中
+    $(function(){
+        $(".del_all").on("click", function(){
+            $(".delete").parent().parent().remove()
+            $("#change").children().text("0")
+            $("#down").children().text("0")
+        })
+    })
+
 
 </script>
 
@@ -162,7 +218,7 @@
                     <td width="11%">操作</td>
                   </tr>
                   <tr class="tr_c">
-                    <td><input type="checkbox" checked="checked"/></td>
+                    <td><input type="checkbox" checked="checked" name="sub"/></td>
                     <td colspan="2">
                     	<table width="100%" border="0" cellspacing="0" cellpadding="0">
                           <tr>
@@ -174,10 +230,10 @@
                     <td class="price mid-dj">￥<span>3083</span>.00</td>
                     <td><span class="jian sl-left"><a href="#">-</a></span><input type="text" value="1"/><a href="#" class="jia sl-right">+</a></td>
                     <td class="price mid-je">￥<span>3083</span>.00</td>
-                    <td><a href="#">删除</a></td>
+                    <td><a href="#" class="delete" id="del">删除</a></td>
                   </tr>
                   <tr class="tr_c">
-                    <td><input type="checkbox" checked="checked"/></td>
+                    <td><input type="checkbox" checked="checked" name="sub"/></td>
                     <td colspan="2">
                     	<table width="100%" border="0" cellspacing="0" cellpadding="0">
                           <tr>
@@ -189,15 +245,15 @@
                     <td class="price mid-dj">￥<span>3083</span>.00</td>
                     <td><span class="jian sl-left"><a href="#">-</a></span><input type="text" value="1"/><span class="jia sl-right"><a href="#">+</a></span></td>
                     <td class="price mid-je">￥<span>3083</span>.00</td>
-                    <td><a href="#">删除</a></td>
+                    <td><a href="#" class="delete" id="del_one">删除</a></td>
                   </tr>
-                  <tr class="tr_d">
+                  <tr class="tr_d" id="baishaofan">
                     <td colspan="7">
                     	<table width="100%" border="0" cellspacing="0" cellpadding="0">
                           <tr>
-                            <td width="75%"><span class="del"><a href="#">删除选中商品</a></span></td>
-                            <td width="11%">已选商品  <strong>1</strong>  件</td>
-                            <td width="14%" class="all_price">合计：<font class="jshj-p2">￥<span>3083</span>.00</font></td>
+                            <td width="75%"><span><a href="#" class="del_all">删除选中商品</a></span></td>
+                            <td width="11%" id="change">已选商品  <strong>1</strong>  件</td>
+                            <td width="14%" class="all_price">合计：<font class="jshj-p2" id="down">￥<span class="total">3083</span>.00</font></td>
                           </tr>
                         </table>
                     </td>
