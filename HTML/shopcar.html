@@ -74,15 +74,13 @@
 		});
     });
     
+    //删除
     $(function(){
-        $(".del").on("click",function(){
-            $(this).parent().parent().remove()
-        })
-        $(".del_one").on("click", function(){
-            $(this).parent().parent().remove()
+        $(".del").on("click", function(){
+            $("#del_o").
         })
     })
-	
+
 </script>
 
 </head>
@@ -153,9 +151,9 @@
       	<dl>
         	<dt><span>我的购物车</span></dt>
             <dd>
-            	<table width="100%" cellpadding="0" cellspacing="0" border="0">
+            	<table width="100%" cellpadding="0" cellspacing="0" border="0" id="test_table">
                   <tr class="tr_t">
-                    <td width="4%"><input type="checkbox" checked="checked" class="check_all" name="sub"/></td>
+                    <td width="4%"><input type="checkbox" checked="checked" class="check_all"/></td>
                     <td width="4%">全选</td>
                     <td width="35%">商品</td>
                     <td width="26%">单价</td>
@@ -164,7 +162,7 @@
                     <td width="11%">操作</td>
                   </tr>
                   <tr class="tr_c">
-                    <td><input type="checkbox" checked="checked" name="sub"/></td>
+                    <td><input type="checkbox" checked="checked"/></td>
                     <td colspan="2">
                     	<table width="100%" border="0" cellspacing="0" cellpadding="0">
                           <tr>
@@ -179,7 +177,7 @@
                     <td><a href="#">删除</a></td>
                   </tr>
                   <tr class="tr_c">
-                    <td><input type="checkbox" checked="checked" name="sub"/></td>
+                    <td><input type="checkbox" checked="checked"/></td>
                     <td colspan="2">
                     	<table width="100%" border="0" cellspacing="0" cellpadding="0">
                           <tr>
