@@ -13,13 +13,13 @@ Fourmen Mall warehouse
 
 注册页面 
 
-​	函数名：reg
+​	函数名：reg reg_now
 
 ​	负责人：陈加明
 
 登录页面
 
-​	函数名：login
+​	函数名：login checks
 
 ​	负责人：陈加明
 
@@ -97,4 +97,3 @@ Fourmen Mall warehouse
 ​	确认收货
 
 ​	评价系统
-
