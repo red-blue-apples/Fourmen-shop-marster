@@ -266,7 +266,7 @@ def reg_now(pots, cookie, call_func):
     sql = """select id from user where user_name=%s;"""
     cursor.execute(sql, username)
     id = cursor.fetchone()
-    sql = "insert into user_info values(0,'新用户',null,'男',%s,null,null,null);"
+    sql = "insert into user_info values(0,'新用户',null,'男',%s,null,null,null,null);"
     # 执行sql语句
     cursor.execute(sql, [id])
     cursor.close()
@@ -282,7 +282,7 @@ def checks(pots, cookie, call_func):
     :param pots:
     :return:
     """
-
+    print(pots)
     # 获取用户名和密码 然后转码
     username = pots["username"]
     username = unquote(username)
@@ -307,11 +307,8 @@ def checks(pots, cookie, call_func):
                   [("Content-Type", "text/html;charset=utf-8"), ("framework", "mini_web"), ("Location", "./index.html"),
                    ("Set-cookie", cookie)])
         set_cookie(cookie, login_info[0])
-
         return "302"
-    call_func("302 Temporarily Moved",
-              [("Content-Type", "text/html;charset=utf-8"), ("framework", "mini_web"), ("Location", "./login.html")])
-    ret = "<script>alert('用户名或密码错误')</script>"
+    ret = "用户名或密码错误"
 
     return ret
 
