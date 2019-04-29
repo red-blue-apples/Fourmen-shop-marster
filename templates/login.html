@@ -7,6 +7,41 @@
     <link href="css/style.css" type="text/css" rel="stylesheet"/>
     <script src="js/jquery-1.5.1.js">
     </script>
+    <script>
+            $(document).ready(function () {
+            $("#submit").click(function () {
+                username = $("#username").val()
+                password = $("#password").val()
+                verify = $("#verify")
+                $("#username").focus(function(){
+                    verify.hide();
+                })
+                $("#password").focus(function(){
+                    verify.hide();
+                })
+                // "密码长度不符合规范(密码长度6-20)"
+                if (password.length <= 6 || password.length >= 20) {
+                    verify.show();
+                    verify.text("密码长度不符合规范(密码长度6-20)")
+                    
+                } else if (password.indexOf(" ") > 0) {
+                    verify.text("密码中不能有空格")
+                } else if (!isNaN(password)){
+                    verify.text("密码不能为纯数字")
+                }
+                $.post("./pwd_ok.html",
+                        {
+                            old_password: old_user,
+                            new_password: cm_user
+                        },
+                        function (data, status) {
+                            // alert("请求返回值：" + data + "\n状态：" + status);
+                            location.href=data 
+                        });
+                }
+            });
+        });
+    </script>
 
 </head>
 <body class="member">
@@ -31,7 +66,8 @@
     <div class="w1185">
         <form action="./checks.html" class="form" method="post">
             <p class="p01"><span>会员登录</span><a href="./reg.html">免费注册</a></p>
-            <p class="p02"><input type="text" id="username" value="账户名" name="username" class="txt"
+
+            <p class="p02"><span id="verify" style="color:red;display: none"></span> <input type="text" id="username" value="账户名" name="username" class="txt"
                                   onfocus="if(value=='账户名') {value=''}"
                                   onblur="if(value=='') {value='账户名'}"/></p>
             <p class="p03"><input type="text" id="password" value="密码" name="password" class="txt"

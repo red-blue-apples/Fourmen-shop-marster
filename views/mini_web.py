@@ -180,12 +180,31 @@ def login(*args):
 
 
 @route(r"/member\.html")
-def member():
+def member(cookie, call_func):
     # 1. 获取对应的html模板
-    with mini_open("/member.html") as f:
-        content = f.read()
+    if cookie:
+        cookie = cookie.split("'")
+        cookie = cookie[1]
+        # 1. 获取对应的html模板
+        db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                             charset='utf8')
+        cursor = db.cursor()
+        sql = """select user_info.name,user_info.vip from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
+        cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        name = cursor.fetchone()
+        cursor.close()
+        db.close()
 
-    return content
+        with mini_open("/member.html") as f:
+            content = f.read()
+
+            content = re.sub(r"\{% name %\}", name[0], content)
+            content = re.sub(r"\{% vip %\}", name[1], content)
+
+        return content
+    else:
+        redirect(call_func)
+        return "302"
 
 
 @route(r"/shopcar\.html")
@@ -338,10 +357,29 @@ def pwd(cookie, call_func):
     :return:
     """
     # 1. 获取对应的html模板
-    with mini_open("/pwd.html") as f:
-        content = f.read()
+    if cookie:
+        cookie = cookie.split("'")
+        cookie = cookie[1]
+        # 1. 获取对应的html模板
+        db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                             charset='utf8')
+        cursor = db.cursor()
+        sql = """select user_info.name,user_info.vip from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
+        cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        name = cursor.fetchone()
+        cursor.close()
+        db.close()
 
-    return content
+        with mini_open("/pwd.html") as f:
+            content = f.read()
+
+            content = re.sub(r"\{% name %\}", name[0], content)
+            content = re.sub(r"\{% vip %\}", name[1], content)
+
+        return content
+    else:
+        redirect(call_func)
+        return "302"
 
 
 @route(r"/pwd_ok\.html")
@@ -365,7 +403,8 @@ def pwd_ok(pots, cookie, call_func):
         print("==============")
         # 获取指定id=1的用户 密码
         sql = "select password from user where id=%s;"
-        cursor.execute(sql,[cookie])
+        print(cookie)
+        cursor.execute(sql, [cookie])
         sql_password = cursor.fetchall()
         print("------>数据库密码", sql_password)
         old_password = pots['old_password']
@@ -377,11 +416,11 @@ def pwd_ok(pots, cookie, call_func):
             print("原始密码确认成功")
             # 修改指定id=1的用户 密码
             new_password = pots['new_password']
-            sql = "update user set password=%s where id=1;"
-            cursor.execute(sql, [new_password])
+            sql = "update user set password=%s where id=%s;"
+            cursor.execute(sql, [new_password, cookie])
             print("用户数据库密码修改成功")
 
-        return "ok"
+        return "./login.html"
     else:
         redirect(call_func)
         return "302"
