@@ -99,11 +99,11 @@ input,button{border-top-width: 0px;
 .menu .item a.nav{width:204px;background:url(../images/home/ico12.jpg) no-repeat 60px center #e83426;padding-left:30px}
 
 
-.banner{height:450px; display:block; position:relative;z-index:1}
+.banner{height:600px; display:block; position:relative;z-index:1}
 .banner .w_auto{position:relative; z-index:1;}
-.banner ul {height:450px; position:absolute; top:0; left:0; width:100%; display:block;}
-.banner ul li{position:absolute; width:100%; top:0; left:0; height:450px; overflow:hidden; display:none;}
-.banner ul li a{display:block; height:450px;}
+.banner ul {height:600px; position:absolute; top:0; left:0; width:100%; display:block;}
+.banner ul li{position:absolute; width:100%; top:0; left:0; height:600px; overflow:hidden; display:none;}
+.banner ul li a{display:block; height:600px;}
 
 .banner .point{ height:15px; position:absolute; display:block; left:47%; top:430px; z-index:1}
 .banner .point span{width:43px; text-indent:-9999px; cursor:pointer; height:4px;color:#fff;display:inline; float:left; margin-right:10px;background:#a89fc7}

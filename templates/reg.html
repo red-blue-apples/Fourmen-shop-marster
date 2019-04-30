@@ -8,8 +8,6 @@
     </script>
     <script>
         $(document).ready(function () {
-
-
             $("#submit").click(function () {
                 user = $("#username").val()
                 pass = $("#password").val()
@@ -18,17 +16,15 @@
                     alert("用户名或密码长度低于6位")
                 } else if (pass !== cm) {
                     alert("密码和确认密码不相同")
-                }else if($("#ok".val()!="ok")){
+                }else if(!($("input[type='checkbox']").attr('checked'))){
                     alert("请查看免责条款 简言之你必须接受")
                 } else {
-
                     $.post("./reg_now.html",
                         {
                             username: user,
                             password: pass
                         },
                         function (data, status) {
-                        alert(data)
                             if (data == "0") {
                                 alert("账号已经存在");
                             } else {
@@ -79,7 +75,7 @@
                                                                             name="verification"
                                                                             class="txt txt2"/><img
                             src="images/code.jpg"/><a href="#">看不清?换一张</a></li>
-                    <li class="li01"><input type="checkbox" id="ok" value="ok" name="ok"/>我已阅并同意<a rel="#">《易易城用户注册协议》</a></li>
+                    <li class="li01"><input type="checkbox" id="ok" value="ok" name="ok"/>我已阅并同意<a rel="#">《用户注册协议》</a></li>
                     <li class="li02"><input type="button" id="submit" value="立即注册" class="sub"/></li>
                 </ul>
             </form>
@@ -93,7 +89,7 @@
     <a href="#">关于我们</a>|<a href="#">帮助中心</a>|<a href="#">法律声明</a>|<a href="#">用户协议</a>|<a href="#">联系我们</a>|<a
         href="#">人才招聘</a>|<a href="#">站点地图</a>
 
-    <p>网络文化经营许可证：粤网文[2015]0295-065号<br/>© 2015 深圳易易城科技网络有限公司. 粤ICP备15042543号</p>
+    <p>网络文化经营许可证：粤网文[2020]8888-8888号<br/>© 2015 FourMen. 粤ICP备88888888号</p>
 </div>
 </body>
 </html>
