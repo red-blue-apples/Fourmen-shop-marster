@@ -556,7 +556,7 @@ def reg_now(pots, cookie, call_func):
     sql = """select id from user where user_name=%s;"""
     cursor.execute(sql, username)
     id = cursor.fetchone()
-    sql = "insert into user_info values(0,'新用户',null,'男',%s,null,null,null,null);"
+    sql = "insert into user_info values(0,'新用户',null,'男',%s,null,null,null,'青铜会员');"
     # 执行sql语句
     cursor.execute(sql, [id])
     cursor.close()
