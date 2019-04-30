@@ -1,16 +1,36 @@
 ﻿<!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>{% content %}</title>
     <link href="css/style.css" type="text/css" rel="stylesheet" />
-    <script src="js/jquery-1.7.min.js" type="text/javascript"></script>
+    <script src="js/jquery-1.5.1.js">
+    </script>
     <script src="js/common.js" type="text/javascript"></script>
-    <SCRIPT LANGUAGE="JavaScript">
+    <script>
 
-    </SCRIPT>
+        $(document).ready(function () {
+            $("#submit").click(function () {
+                cid = $("#cid").val()
+                $.post("./addcar.html",
+                    {
+                        cid: cid
+                    },
+                    function (data, status) {
+                        if (data == "ok") {
+                            alert("加入购物车成功")
+
+
+                        } else
+                            alert("加入购物车失败")
+                    });
+            });
+        });
+
+    </script>
+
 </head>
 
 <body class="index">
@@ -18,7 +38,7 @@
         <div class="w1200">
             <div class="left">您好，欢迎光临京东！尊敬的 {% name %}</div>
             <div class="right"><a href="./member.html">我的会员中心</a>|<a href="#">收藏夹</a>|<a href="#">服务中心</a>|<a
-                    href="#">在线客服</a>|<a href="./shopcar.html">购物车<b>0</b>件</a></div>
+                    href="#">在线客服</a>|<a href="./shopcar.html">购物车</a></div>
             <div class="clear"></div>
         </div>
     </div>
@@ -38,7 +58,7 @@
             <div class="s_r">
                 <dl>
                     <dt>
-                        <p>购物车<span>0</span></p>
+                        <p>购物车</p>
                     </dt>
                     <dd>客服电话：<b>400-0139-038</b></dd>
                 </dl>
@@ -57,23 +77,23 @@
 
 
     <div class="w1200 product">
-        <div class="position"><a href="./index.html">首页</a> 
+        <div class="position"><a href="./index.html">首页</a>
 
-        <link rel="stylesheet" href="css/detail.css" type="text/css" />
-        <script src="js/jquery-1.5.1.js" type="text/javascript"></script>
-        <script src="js/jquery.jqzoom.js" type="text/javascript"></script>
-        <script src="js/use_jqzoom.js" type="text/javascript"></script>
+            <link rel="stylesheet" href="css/detail.css" type="text/css" />
+            <script src="js/jquery-1.5.1.js" type="text/javascript"></script>
+            <script src="js/jquery.jqzoom.js" type="text/javascript"></script>
+            <script src="js/use_jqzoom.js" type="text/javascript"></script>
 
-        <script src="js/jquery.livequery.js" type="text/javascript"></script>
-        <script src="js/switchImg.js" type="text/javascript"></script>
-        <!--one-->
-        <div class="one">
-            <div class="left">
-                <!--放大镜-->
-                <div class="pro_detail">
+            <script src="js/jquery.livequery.js" type="text/javascript"></script>
+            <script src="js/switchImg.js" type="text/javascript"></script>
+            <!--one-->
+            <div class="one">
+                <div class="left">
+                    <!--放大镜-->
+                    <div class="pro_detail">
                         <div class="pro_detail_left">
-                            <div class="jqzoom"><img src="{% img %}" class="fs" alt="" jqimg="{% img %}"
-                                    id="bigImg" /></div>
+                            <div class="jqzoom"><img src="{% img %}" class="fs" alt="" jqimg="{% img %}" id="bigImg" />
+                            </div>
                             <span>
                                 <ul class="imgList">
                                     <li class="on"><img src="{% img %}" alt="" /></li>
@@ -85,240 +105,241 @@
                             </span>
                         </div>
                     </div>
-            
-                <!--放大镜-->
-            </div>
-            <div class="right">
-                <div class="title">{% cname %}</div>
-                <div class="info">{% content %}</div>
 
-                <div class="price">
-                    <table width="100%" height="61" border="0" cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td width="8%">售价：</td>
-                            <td width="41%"><b>￥{% price %}</b></td>
-                        </tr>
-                    </table>
+                    <!--放大镜-->
                 </div>
-    
-                <div class="sub"><a href="#" class="btn01"></a><a href="#" class="btn02"></a></div>
+                <div class="right">
+                    <div class="title">{% cname %}</div>
+                    <div class="info">{% content %}</div>
+
+                    <div class="price">
+                        <table width="100%" height="61" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td width="8%">售价：</td>
+                                <td width="41%"><b>￥{% price %}</b></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="sub">
+                        <input type="hidden" id="cid" name="id" value="{% cid %}">
+                        <a href="./shopcar.html" class="btn01"></a><a id="submit" class="btn02"></a></a></div>
+                </div>
+                <div class="clear"></div>
             </div>
-            <div class="clear"></div>
-        </div>
 
-        <div class="share w1200">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
+            <div class="share w1200">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
 
-                    <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#"
-                            class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina" data-cmd="tsina"></a><a
-                            href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#" class="bds_renren"
-                            data-cmd="renren"></a><a href="#" class="bds_weixin" data-cmd="weixin"></a></div>
-                    <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {}, "image": { "viewList": ["qzone", "tsina", "tqq", "renren", "weixin"], "viewText": "分享到：", "viewSize": "16" }, "selectShare": { "bdContainerClass": null, "bdSelectMiniList": ["qzone", "tsina", "tqq", "renren", "weixin"] } }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
-                    <span>分享到:</span>
-                    </td>
-                </tr>
-            </table>
-        </div>
+                        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#"
+                                class="bds_qzone" data-cmd="qzone"></a><a href="#" class="bds_tsina"
+                                data-cmd="tsina"></a><a href="#" class="bds_tqq" data-cmd="tqq"></a><a href="#"
+                                class="bds_renren" data-cmd="renren"></a><a href="#" class="bds_weixin"
+                                data-cmd="weixin"></a></div>
+                        <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {}, "image": { "viewList": ["qzone", "tsina", "tqq", "renren", "weixin"], "viewText": "分享到：", "viewSize": "16" }, "selectShare": { "bdContainerClass": null, "bdSelectMiniList": ["qzone", "tsina", "tqq", "renren", "weixin"] } }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+                        <span>分享到:</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
-        <!--two-->
-        <div class="two">
-            <div class="left">
-                <dl>
-                    <dt>相关产品</dt>
-                    <dd>
+            <!--two-->
+            <div class="two">
+                <div class="left">
+                    <dl>
+                        <dt>相关产品</dt>
+                        <dd>
                             {% left %}
-                    </dd>
-                    
+                        </dd>
 
-            </div>
-            <div class="right">
-                <dl>
-                    <dt><a class="cur" href="#a01">商品详情</a><a href="#a02">规格参数</a><a href="#a03">累计评价<font>（2654）</font>
-                            </a><a href="#a04">售后保障</a><a href="#a05">JD</a></dt>
-                    <dd>
-                        <a name="a01"></a>
-                        <ul>
-                            <img src="{% particulars %}" alt="简介">
-                            
-                            <div class="clear"></div>
-                        </ul>
-                    </dd>
-                    <dd class="dd02">
-                        <div class="dd02_t">累计评价 </div>
-                        <!--评价-->
-                        <div class="rate-header rate-header-tags">
-                            <div class="rate-score">
-                                <h4>与描述相符</h4>
-                                <strong>4.8</strong>
-                                <p><span class="s48"></span></p>
-                            </div>
-                            <div class="rate-tag-box">
-                                <div class="rate-tag-label">
-                                    <span>大家都写到</span>
+
+                </div>
+                <div class="right">
+                    <dl>
+                        <dt><a class="cur" href="#a01">商品详情</a></dt>
+                        <dd>
+                            <a name="a01"></a>
+                            <ul>
+                                <img src="{% particulars %}" alt="简介">
+
+                                <div class="clear"></div>
+                            </ul>
+                        </dd>
+                        <dd class="dd02">
+                            <div class="dd02_t">累计评价 </div>
+                            <!--评价-->
+                            <div class="rate-header rate-header-tags">
+                                <div class="rate-score">
+                                    <h4>与描述相符</h4>
+                                    <strong>4.8</strong>
+                                    <p><span class="s48"></span></p>
                                 </div>
-                                <div class="rate-tag-list" style="height: 70px;">
+                                <div class="rate-tag-box">
+                                    <div class="rate-tag-label">
+                                        <span>大家都写到</span>
+                                    </div>
+                                    <div class="rate-tag-list" style="height: 70px;">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="clear"></div>
-                        </div>
-                    </dd>
-                    <dd class="dd03">
-                        <div class="pj_list">
-                            <div class="pj_one">
-                                <dl>
-                                    <dt><a class="cur" href="#a01">全部<font>（1）</font></a><a href="#a02">好评<font>
-                                                （1）</font></a><a href="#a03">中评<font>（0）</font></a><a
-                                            href="#a04">差评<font>（16）</font></a><a href="#a05">有图评价<font>（919）</font></a>
-                                    </dt>
-                                </dl>
                                 <div class="clear"></div>
                             </div>
-                            <div class="pj_two">
-                                <div class="pj_item">
-                                    <div class="two1">初次评价：<br />06.16</div>
-                                    <div class="two2">
-                                        <p>模板评论</p>
-                                        <p><img src="{% img %}"/><img src="{% img %}"/></p>
-                                    </div>
-                                    <div class="two3">管理员<br /><img src="images/ico37.jpg" /><img
-                                            src="images/ico37.jpg" /><img src="images/ico37.jpg" /></div>
+                        </dd>
+                        <dd class="dd03">
+                            <div class="pj_list">
+                                <div class="pj_one">
+                                    <dl>
+                                        <dt><a class="cur" href="#a01">全部<font>（1）</font></a><a href="#a02">好评<font>
+                                                    （1）</font></a><a href="#a03">中评<font>（0）</font></a><a href="#a04">差评
+                                                <font>（16）</font></a><a href="#a05">有图评价<font>（919）</font></a>
+                                        </dt>
+                                    </dl>
                                     <div class="clear"></div>
                                 </div>
-                                <!--page-->
-                                <div class="page"><a href="#">上一页</a><a href="#" class="on">1</a><a href="#">2</a><a
-                                        href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#">6</a><a
-                                        href="#">7</a><a href="#">7</a><a href="#">...</a><a href="#">下一页</a></div>
-                                <!--page2-->
+                                <div class="pj_two">
+                                    <div class="pj_item">
+                                        <div class="two1">初次评价：<br />06.16</div>
+                                        <div class="two2">
+                                            <p>模板评论</p>
+                                            <p><img src="{% img %}" /><img src="{% img %}" /></p>
+                                        </div>
+                                        <div class="two3">管理员<br /><img src="images/ico37.jpg" /><img
+                                                src="images/ico37.jpg" /><img src="images/ico37.jpg" /></div>
+                                        <div class="clear"></div>
+                                    </div>
+                                    <!--page-->
+                                    <div class="page"><a href="#">上一页</a><a href="#" class="on">1</a><a href="#">2</a><a
+                                            href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#">6</a><a
+                                            href="#">7</a><a href="#">7</a><a href="#">...</a><a href="#">下一页</a></div>
+                                    <!--page2-->
+                                </div>
                             </div>
-                        </div>
-                    </dd>
-                </dl>
+                        </dd>
+                    </dl>
 
-                <div class="shenmin">
-                    <p><b>安全提示：</b>交易中请勿使用阿里旺旺以外的聊天工具沟通，不要接收可疑文件和不要点击不明来源的链接，支付前核实好域名和支付详情。
-                        淘宝不会以订单有问题，让您提供任何银行卡、密码、手机验证码！遇此情况请终止通话或举报到淘宝网 常见骗术<br />推荐安全软件： 阿里钱盾阿里钱盾 UC浏览器UC浏览器
-                        腾讯电脑管家腾讯电脑管家 360网盾360网盾 安全软件中心</p>
+                    <div class="shenmin">
+                        <p><b>安全提示：</b>交易中请勿使用阿里旺旺以外的聊天工具沟通，不要接收可疑文件和不要点击不明来源的链接，支付前核实好域名和支付详情。
+                            淘宝不会以订单有问题，让您提供任何银行卡、密码、手机验证码！遇此情况请终止通话或举报到淘宝网 常见骗术<br />推荐安全软件： 阿里钱盾阿里钱盾 UC浏览器UC浏览器
+                            腾讯电脑管家腾讯电脑管家 360网盾360网盾 安全软件中心</p>
 
-                    <p><b>内容申明：</b>淘宝为第三方交易平台及互联网信息服务提供者，淘宝（含网站、客户端等）所展示的商品/服务的标题、价格、详情等信息内容系由店铺经营者发布，其真实性、准确性和合法性均由店铺经营者负责。淘宝提醒用户购买商品/服务前注意谨慎核实。如用户对商品/服务的标题、价格、详情等任何信息有任何疑问的，请在购买前通过阿里旺旺与店铺经营者沟通确认；淘宝存在海量店铺，如用户发现店铺内有任何违法/侵权信息，请立即向淘宝举报并提供有效线索。
-                    </p>
+                        <p><b>内容申明：</b>淘宝为第三方交易平台及互联网信息服务提供者，淘宝（含网站、客户端等）所展示的商品/服务的标题、价格、详情等信息内容系由店铺经营者发布，其真实性、准确性和合法性均由店铺经营者负责。淘宝提醒用户购买商品/服务前注意谨慎核实。如用户对商品/服务的标题、价格、详情等任何信息有任何疑问的，请在购买前通过阿里旺旺与店铺经营者沟通确认；淘宝存在海量店铺，如用户发现店铺内有任何违法/侵权信息，请立即向淘宝举报并提供有效线索。
+                        </p>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+
+        <!--footer-->
+        <div class="footer">
+            <div class="f_bz">
+                <div class="w1200">
+                    <dl class="dl01">
+                        <dt>正品保证</dt>
+                        <dd>正品护航 购物无忧</dd>
+                    </dl>
+                    <dl class="dl02">
+                        <dt>你消费 我买单</dt>
+                        <dd>返现购物商城</dd>
+                    </dl>
+                    <dl class="dl03">
+                        <dt>品类丰富</dt>
+                        <dd>品类齐全 轻松购物</dd>
+                    </dl>
+                    <dl class="dl04">
+                        <dt>特色服务体验</dt>
+                        <dd>为您呈现不一样的服务</dd>
+                    </dl>
+                    <div class="clear"></div>
                 </div>
             </div>
-            <div class="clear"></div>
-        </div>
-    </div>
-
-    <!--footer-->
-    <div class="footer">
-        <div class="f_bz">
+            <div class="f_nav">
+                <div class="w1200">
+                    <dl>
+                        <dt>新手指南</dt>
+                        <dd>
+                            <a href="./reg.html">注册新用户</a>
+                            <a href="#">商品订购流程</a>
+                            <a href="#">会员注册协议</a>
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>付款方式</dt>
+                        <dd>
+                            <a href="./payply.html">支付宝支付</a>
+                            <a href="./payply.html">网上银行支付</a>
+                            <a href="./payply.html">货到付款</a>
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>常见问题</dt>
+                        <dd>
+                            <a href="#">订单状态</a>
+                            <a href="#">发票说明</a>
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>售后服务</dt>
+                        <dd>
+                            <a href="#">退换货政策</a>
+                            <a href="#">退换货流程</a>
+                            <a href="#">退款说明</a>
+                            <a href="#">退换货申请</a>
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt>客服中心</dt>
+                        <dd>
+                            <a href="#">常见问题</a>
+                            <a href="#">联系客服</a>
+                            <a href="#">投诉与建议</a>
+                        </dd>
+                    </dl>
+                    <div class="ewm"><img src="images/home/ico35.png" /></div>
+                    <div class="ewm"><img src="images/home/ico38.png" /></div>
+                    <div class="clear"></div>
+                </div>
+            </div>
             <div class="w1200">
-                <dl class="dl01">
-                    <dt>正品保证</dt>
-                    <dd>正品护航 购物无忧</dd>
-                </dl>
-                <dl class="dl02">
-                    <dt>你消费 我买单</dt>
-                    <dd>返现购物商城</dd>
-                </dl>
-                <dl class="dl03">
-                    <dt>品类丰富</dt>
-                    <dd>品类齐全 轻松购物</dd>
-                </dl>
-                <dl class="dl04">
-                    <dt>特色服务体验</dt>
-                    <dd>为您呈现不一样的服务</dd>
-                </dl>
-                <div class="clear"></div>
-            </div>
-        </div>
-        <div class="f_nav">
-            <div class="w1200">
-                <dl>
-                    <dt>新手指南</dt>
-                    <dd>
-                        <a href="./reg.html">注册新用户</a>
-                        <a href="#">商品订购流程</a>
-                        <a href="#">会员注册协议</a>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt>付款方式</dt>
-                    <dd>
-                        <a href="./payply.html">支付宝支付</a>
-                        <a href="./payply.html">网上银行支付</a>
-                        <a href="./payply.html">货到付款</a>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt>常见问题</dt>
-                    <dd>
-                        <a href="#">订单状态</a>
-                        <a href="#">发票说明</a>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt>售后服务</dt>
-                    <dd>
-                        <a href="#">退换货政策</a>
-                        <a href="#">退换货流程</a>
-                        <a href="#">退款说明</a>
-                        <a href="#">退换货申请</a>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt>客服中心</dt>
-                    <dd>
-                        <a href="#">常见问题</a>
-                        <a href="#">联系客服</a>
-                        <a href="#">投诉与建议</a>
-                    </dd>
-                </dl>
-                <div class="ewm"><img src="images/home/ico35.png" /></div>
-                <div class="ewm"><img src="images/home/ico38.png" /></div>
-                <div class="clear"></div>
-            </div>
-        </div>
-        <div class="w1200">
-            <div class="bottom">
-                <a href="#">关于我们</a>|<a href="#">帮助中心</a>|<a href="#">法律声明</a>|<a href="#">用户协议</a>|<a
-                    href="#">联系我们</a>|<a href="#">人才招聘</a>|<a href="#">站点地图</a>
+                <div class="bottom">
+                    <a href="#">关于我们</a>|<a href="#">帮助中心</a>|<a href="#">法律声明</a>|<a href="#">用户协议</a>|<a
+                        href="#">联系我们</a>|<a href="#">人才招聘</a>|<a href="#">站点地图</a>
 
-                <p>网络文化经营许可证：粤网文[2015]0295-065号<br />© 2015 深圳易易城科技网络有限公司. 粤ICP备15042543号</p>
-                <p class="p02"><img src="images/home/ico25.jpg" /><img src="images/home/ico26.jpg" /><img
-                        src="images/home/ico27.jpg" /><img src="images/home/ico36.jpg" /><img
-                        src="images/home/ico37.jpg" /></p>
+                    <p>网络文化经营许可证：粤网文[2015]0295-065号<br />© 2015 深圳易易城科技网络有限公司. 粤ICP备15042543号</p>
+                    <p class="p02"><img src="images/home/ico25.jpg" /><img src="images/home/ico26.jpg" /><img
+                            src="images/home/ico27.jpg" /><img src="images/home/ico36.jpg" /><img
+                            src="images/home/ico37.jpg" /></p>
+                </div>
             </div>
         </div>
-    </div>
-    <!--float_right-->
-    <div class="float">
-        <ul>
-            <li><a href="#" class="a01"></a></li>
-            <li><a href="#" class="a02"></a></li>
-            <li><a href="#" class="a03"></a></li>
-            <li><a href="#" class="a04"></a></li>
-        </ul>
-    </div>
+        <!--float_right-->
+        <div class="float">
+            <ul>
+                <li><a href="#" class="a01"></a></li>
+                <li><a href="#" class="a02"></a></li>
+                <li><a href="#" class="a03"></a></li>
+                <li><a href="#" class="a04"></a></li>
+            </ul>
+        </div>
 
-    <script type="text/javascript">
-        $(function () {
-            var imgWid = 0;
-            var imgHei = 0; //变量初始化
-            var big = 6.2;//放大倍数
-            $(".pj_item .two2 p img").hover(function () {
-                $(this).stop(true, true);
-                var imgWid2 = 0; var imgHei2 = 0;//局部变量
-                imgWid = $(this).width();
-                imgHei = $(this).height();
-                imgWid2 = imgWid * big;
-                imgHei2 = imgHei * big;
-                $(this).css({ "z-index": 2, "position": "relative" });
-                $(this).animate({ "width": imgWid2, "height": imgHei2, "margin-left": -imgWid2 / 3, "margin-top": -imgWid2 / 3 });
-            }, function () {
-                $(this).stop().animate({ "width": imgWid, "height": imgHei, "margin-left": 0, "margin-top": 0, "z-index": 1 });
-            });
-        })
-    </script>
+        <script type="text/javascript">
+            $(function () {
+                var imgWid = 0;
+                var imgHei = 0; //变量初始化
+                var big = 6.2;//放大倍数
+                $(".pj_item .two2 p img").hover(function () {
+                    $(this).stop(true, true);
+                    var imgWid2 = 0; var imgHei2 = 0;//局部变量
+                    imgWid = $(this).width();
+                    imgHei = $(this).height();
+                    imgWid2 = imgWid * big;
+                    imgHei2 = imgHei * big;
+                    $(this).css({ "z-index": 2, "position": "relative" });
+                    $(this).animate({ "width": imgWid2, "height": imgHei2, "margin-left": -imgWid2 / 3, "margin-top": -imgWid2 / 3 });
+                }, function () {
+                    $(this).stop().animate({ "width": imgWid, "height": imgHei, "margin-left": 0, "margin-top": 0, "z-index": 1 });
+                });
+            })
+        </script>
 </body>
 
 </html>

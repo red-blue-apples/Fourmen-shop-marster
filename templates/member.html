@@ -8,6 +8,48 @@
     <link href="css/style.css" type="text/css" rel="stylesheet" />
     <script src="js/jquery-1.7.min.js" type="text/javascript"></script>
     <script src="js/common.js" type="text/javascript"></script>
+    <script>
+        $(document).ready(function () {
+            $("#submit").click(function () {
+                // 获取值
+                username = $("#user_name").val();
+                user_id = $("#user_id").val();
+                sex = $("#sex").val();
+                user_yinghan = $("#user_yinghan").val();
+                yinghan_num = $("#yinghan_num").val();
+                emali = $("#emali").val();
+                add = $("#address").val();
+                if (username.length < 2 || user_id.length < 2) {
+                    alert("用户名和身份证数字太低")
+                    break
+                } else {
+                    alert("aaaaa")
+                    $.post("./member_now.html",
+                        // 发送数据库
+                        {
+                            new_username: username,
+                            new_user_id: user_id,
+                            user_yinghan_name: user_yinghan,
+                            new_yinghan_num: yinghan_num,
+                            new_emali: emali,
+                            address: add
+                        },
+                        function (data) {
+                            if (data === "1"){
+                                if (data === "1") {
+                                alert("添加成功");
+                                
+                            }
+                        }
+                                
+                    });
+                }
+
+            });
+        });
+
+
+    </script>
 
 </head>
 
@@ -52,27 +94,13 @@
     <div class="menu">
         <div class="w1200">
             <div class="item" id="nav"><a href="./product.html" class="nav">全部商品分类</a>
-                <div class="nav_son">
-                    <ul>
-                        <li class="li01"><a href="#">功能产品</a></li>
-                        <li class="li02"><a href="#">服装箱包</a></li>
-                        <li class="li03"><a href="#">美妆护肤</a></li>
-                        <li class="li04"><a href="#">珠宝饰品</a></li>
-                        <li class="li05"><a href="#">数码家电</a></li>
-                        <li class="li06"><a href="#">食品茶酒</a></li>
-                        <li class="li07"><a href="#">运动体育</a></li>
-                        <li class="li08"><a href="#">家居家纺</a></li>
-                        <li class="li09"><a href="#">生活服务</a></li>
-                        <li class="li10"><a href="#">其他</a></li>
-                    </ul>
-                </div>
             </div>
             <div class="item"><a href="./index.html" class="home">商城首页</a></div>
-            <div class="item"><a href="#">易易特色</a></div>
-            <div class="item"><a href="#">热销产品</a></div>
-            <div class="item"><a href="#">新品上市</a></div>
-            <div class="item"><a href="#">精品推荐</a></div>
-            <div class="item"><a href="#">生活服务</a></div>
+            <div class="item"><a href="#">iPhone</a></div>
+            <div class="item"><a href="#">MacBook</a></div>
+            <div class="item"><a href="#">MacMini</a></div>
+            <div class="item"><a href="#">Wath</a></div>
+            <div class="item"><a href="#">iPad</a></div>
         </div>
     </div>
 
@@ -109,21 +137,15 @@
             <div class="right">
                 <dl class="dl01">
                     <dt><img src="images/ico04.jpg" /></dt>
+
                     <dd>
                         <table width="725" border="0" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td width="416" class="td01">尊敬的，<font>{% name %}</font> 您好！<span>{% vip %}</span></td>
-                                <td width="44">余额：</td>
-                                <td width="122"><span>0.000元</span></td>
-                                <td width="56" align="right">可用：</td>
-                                <td width="87"><span>0.000元</span></td>
+                                
                             </tr>
                             <tr>
-                                <td>还没有上传头像？ 点击<a href="#">上传头像</a><a class="save" href="#">保存</a></td>
-                                <td>冻结：</td>
-                                <td><span>0.000元</span></td>
-                                <td align="right">已提现：</td>
-                                <td><span>0.000元</span></td>
+                               
                             </tr>
                         </table>
                         <img src="images/face.jpg" />
@@ -132,49 +154,57 @@
                 <dl class="dl02">
                     <dt>
                         <span>个人资料</span>
+
+
                     </dt>
-                    <dd>
-                        <div class="item"><span>
-                                <font>*</font>用户真实姓名：
-                            </span><input type="tex" class="txt" /></div>
-                        <div class="item"><span>
-                                <font>*</font>用户身份证号码：
-                            </span><input type="tex" class="txt" /></div>
-                        <div class="item"><span>
-                                <font>*</font>性别：
-                            </span><input type="radio" value="" name="sex" />
-                            男&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" value="" name="sex" /> 女</div>
-                        <div class="item"><span style="float:left">
-                                <font>*</font>开户行：
-                            </span>
-                            <div class="xlc"><input name="aaa" class="txt-xl li01" value="储蓄卡|213213" /><span>更换银行
-                                    V</span>
-                                <ul>
-                                    <li class="li01">储蓄卡|111111</li>
-                                    <li class="li02">储蓄卡|222222</li>
-                                    <li class="li03">储蓄卡|213213</li>
-                                </ul>
+                    <form action="./member_now.html" class="form" method="post">
+                        <dd>
+                            <div class="item"><span>
+                                    <font>*</font>用户真实姓名：
+                                </span><input type="tex" id="user_name" name="user_name" class="txt" /></div>
+                            <div class="item"><span>
+                                    <font>*</font>用户身份证号码：
+                                </span><input type="tex" id="user_id" name="user_id" class="txt" /></div>
+                            <div class="item"><span>
+                                    <font>*</font>性别：
+                                </span><input type="radio" name="gender" id="sex" value="1"
+                                    <%=(user.getStrGender()=="男"?"checked":"")%>
+                                    男&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="gender" id="sex"
+                                    value="0" <%=(user.getStrGender()=="女"?"checked":"")%>女 </div> <div
+                                    class="item"><span style="float:left">
+                                    <font>*</font>开户行：
+                                </span>
+                                <div class="xlc"><input name="aaa" class="txt-xl li01" value="储蓄卡|213213" /><span>更换银行
+                                        V</span>
+                                    <ul>
+                                        <li class="li01">储蓄卡|111111</li>
+                                        <li class="li02">储蓄卡|222222</li>
+                                        <li class="li03">储蓄卡|213213</li>
+                                    </ul>
+                                </div>
+                                <div class="clear"></div>
                             </div>
-                            <div class="clear"></div>
-                        </div>
-                        <div class="item"><span>
-                                <font>*</font>开户人姓名：
-                            </span><input type="tex" class="txt" /></div>
-                        <div class="item"><span>
-                                <font>*</font>银行卡号：
-                            </span><input type="tex" class="txt" /></div>
-                        <div class="item"><span>
-                                <font>*</font>电子邮箱：
-                            </span><input type="tex" class="txt" /> <em>请输入邮箱地址，邮箱将用于找回密码。</em></div>
-                        <div class="item"><span>
-                                <font>*</font>联系地址：
-                            </span><select>
-                                <option value="广东省">广东省</option>
-                            </select><select>
-                                <option value="深圳市">深圳市</option>
-                            </select><input type="tex" class="txt" /></div>
-                        <div class="item"><input type="submit" class="sub" value="保存" /></div>
-                    </dd>
+                            <div class="item"><span>
+                                    <font>*</font>开户人姓名：
+                                </span><input type="tex" id="user_yinghan" name="user_yinghan" class="txt" /></div>
+                            <div class="item"><span>
+                                    <font>*</font>银行卡号：
+                                </span><input type="tex" id="yinghan_num" name="yinghan_num" class="txt" /></div>
+                            <div class="item"><span>
+                                    <font>*</font>电子邮箱：
+                                </span><input type="tex" id="emali" name="emali" class="txt" />
+                                <em>请输入邮箱地址，邮箱将用于找回密码。</em>
+                            </div>
+                            <div class="item"><span>
+                                    <font>*</font>联系地址：
+                                </span><select>
+                                    <option value="广东省">广东省</option>
+                                </select><select>
+                                    <option value="深圳市">深圳市</option>
+                                </select><input type="tex" class="txt" name="address" id="address" /></div>
+                            <div class="item"><input type="submit" id="submit" class="sub" value="保存" /></div>
+                        </dd>
+                    </form>
                 </dl>
             </div>
             <div class="clear"></div>

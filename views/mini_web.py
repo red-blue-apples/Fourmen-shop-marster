@@ -47,98 +47,141 @@ def route(url):  # "/login.py"
 
 
 @route(r"/shopcar\.html")
-def shopcar():
+def shopcar(cookie, call_func):
     """
     购物车
     :return:
     """
-    # 1. 获取对应的html模板
-    # with mini_open("/shopcar.html") as f:
-    #     content = f.read()
-    print("===")
-    # 跳转页面
-    info()
+    cookie = cookie.split("'")
+    cookie = cookie[1]
+    print(cookie)
+    db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+    cursor = db.cursor()
+    sql = """select user_info.name from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
+    cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+    name = cursor.fetchone()
+
+    """========================================="""
+
+    shopcar_temp = """
+            <tr class="tr_c">
+                <td><input type="checkbox" checked="checked" name="sub"></td>
+                <td colspan="2">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                      <tbody><tr>
+                        <td width="15%"><img src="{0[3]}"></td>
+                        <td width="85%"><a href="#" class="title">{0[1]}</a></td>
+                      </tr>
+                    </tbody></table>
+                </td>
+                <td class="price mid-dj">￥{0[2]}</td>
+              </tr>
+    """
+    shopcar = ""
+    sql = """select * from commoditys as c left join shopcar as s on s.cid=c.id left join `user` as u on s.uid=u.id WHERE u.id=%s;"""
+    cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+    car_info = cursor.fetchall()
+    print(car_info)
+    hj = 0
+    for info in car_info:
+        print(info)
+        shopcar += str(shopcar_temp.format(info))
+        hj += info[2]
 
 
+    with mini_open("/shopcar.html") as f:
+        content = f.read()
+        content = re.sub(r"\{% name %\}", name[0], content)
+        content = re.sub(r"\{% shopcar %\}", str(shopcar), content)
+        content = re.sub(r"\{% hj %\}", str(hj), content)
+
+    return content
 @route(r"/info\.html")
-def info():
-    """
-    收货地址
-    :return:
-    """
-    # 1. 获取对应的html模板
+def info(cookie, call_func):
+    cookie = cookie.split("'")
+    cookie = cookie[1]
+    print(cookie)
+    db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+    cursor = db.cursor()
+    sql = """select user_info.name from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
+    cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+    name = cursor.fetchone()
     with mini_open("/info.html") as f:
         content = f.read()
-
-    # 从MySQL中查询数据
-
-    address = pymysql.connect(host="localhost", port="8080", user="root", password="123456", database="adderss",
-                              charset="utf8")
-
-    cursor = address.cursor()
-    # sql语句
-    sql = """update adderss """
-    # 执行sql语句
-    cursor.execute(sql)
-    data_from_mysql = cursor.fetchall()
-    cursor.close()
-    address.close()
-
-    # 找到模板
-    html_template = """
-                    <dd>
-                        <div class="item">
-                            <span><font>*</font>"所在地区："</span>
-                            <select><option>广东省</option></select>
-                            <select><option>深圳市</option></select>
-                            <input type="tex" class="txt">
-                        </div>
-                        <div class="item"><span>
-                            <font>*</font>"邮政编码："
-                        </span>
-                            <input type="tex" class="txt">
-                        </div>
-                        <div class="item"><table width="100%" border="0" cellpadding="0">
-                            <tbody><tr>
-                                <td width="8%">
-                                    <span><font>*</font>"详细地址："</span>
-                                </td>
-                                <td width="92%"><textarea style="margin: 0px; height: 125px; width: 437px;"></textarea></td>
-                            </tr></tbody>
-                        </table></div>
-                        <div class="item"><span><font>*</font>"收货人姓名："</span>
-                            <input type="tex" class="txt">
-                        </div>
-                        <div class="item"><span><font>*</font>"手机："</span>
-                            <input type="tex" class="txt">
-                        </div>
-                        <div class="item"><span><font>*</font>"电话："
-                            <input type="tex class="txt">
-                        </span></div>
-                        <div class="item"><input type="submit" class="sub" value="保存收货人信息"></div>
-                    </dd>
-    
-    """
-
-    # 3. 替换
-    html = ""
-    for one_stock_info in data_from_mysql:
-        html += html_template.format(one_stock_info)
-
-    # 通过正则表达式替换 html模板中 变量
-    content = re.sub(r"\{% content %\}", html, content)
+        content = re.sub(r"\{% name %\}", name[0], content)
 
     return content
 
 
-@route(r"/payply\.html")
-def payply():
-    """
-    提交订单
-    :return:
-    """
-    pass
+@route(r"/info_ok\.html")
+def info_ok(post, cookie, call_func):
+    # 将字典中的汉字转译
+    post['local_information'] = unquote(post['local_information'])
+    post['detailed_address'] = unquote(post['detailed_address'])
+    post['consignee'] = unquote(post['consignee'])
+    # 获取提交订单网页信息
+    print("=====获取信息如下====")
+    print(post)
+    print("===================")
+    # 链接数据库
+    db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+    print("-------》链接数据库成功")
+    # 获取游标
+    cursor = db.cursor()
+    # 开始上传收货地址订单信息
+    try:
+        sql = "update adderss set adderss=%s,postal_code=%s,detailed_address=%s,name=%s,phone_num=%s,Tel=%s where id=1;"
+        a = post['local_information']
+        b = post['postal_code']
+        c = post['detailed_address']
+        d = post['consignee']
+        e = post['mobile_phone']
+        f = post['phone']
+        cursor.execute(sql, [a, b, c, d, e, f])
 
+        call_func("302 Temporarily Moved",
+                  [("Content-Type", "text/html;charset=utf-8"), ("framework", "mini_web"), ("Location", "./payply.html")])
+
+
+        print("数据库上传信息成功")
+        return ""
+    except:
+        print("数据库上传信息失败")
+
+
+
+@route(r"/payply\.html")
+def payply(cookie, call_func):
+    cookie = cookie.split("'")
+    cookie = cookie[1]
+    db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+    cursor = db.cursor()
+    sql = """select user_info.name from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
+    cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+    name = cursor.fetchone()
+
+    db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+    cursor = db.cursor()
+    sql = """select * from commoditys as c left join shopcar as s on s.cid=c.id left join `user` as u on s.uid=u.id WHERE u.id=%s;"""
+    cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+    car_info = cursor.fetchall()
+    hj = 0
+    for info in car_info:
+        print(info)
+        hj += info[2]
+
+
+
+    with mini_open("/payply.html") as f:
+        content = f.read()
+        content = re.sub(r"\{% name %\}", name[0], content)
+        content = re.sub(r"\{% jb %\}", str(hj), content)
+    return content
 
 @route("404")
 def page_404():
@@ -183,7 +226,6 @@ def index(cookie, call_func):
         for info in pic_info:
             pic1 += pic1_temp.format(info)
 
-
         """==============================pic2======================================"""
 
         pic2_temp_one = """
@@ -222,9 +264,7 @@ def index(cookie, call_func):
         pic2 += pic2_temp_one.format(pic_info[0])
 
         for info in pic_info:
-
             pic2 += pic2_temp.format(info)
-
 
         """==============================pic3======================================"""
 
@@ -328,6 +368,8 @@ def login(*args):
         content = f.read()
 
     return content
+
+
 @route(r"/product\.html")
 def product(pots, cookie, call_func):
     pots = pots["keyword"]
@@ -363,9 +405,9 @@ def product(pots, cookie, call_func):
         sql = """select user_info.name from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
         cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
         name = cursor.fetchone()
-        pots = "%"+pots+"%"
+        pots = "%" + pots + "%"
         sql = """select id,name,price,picimg,content from commoditys where name like %s;"""
-        cursor.execute(sql,pots)  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        cursor.execute(sql, pots)  # 为了避免SQL注入，此时用MySQL自带的功能参数化
         pro_info = cursor.fetchall()
         pro = ""
         for info in pro_info:
@@ -373,14 +415,14 @@ def product(pots, cookie, call_func):
 
         with mini_open("/product.html") as f:
             content = f.read()
-            print("=========",name)
+            print("=========", name)
             content = re.sub(r"\{% name %\}", name[0], content)
             content = re.sub(r"\{% pro_cont %\}", pro, content)
-
 
         cursor.close()
         db.close()
         return content
+
 
 @route(r"/member\.html")
 def member(cookie, call_func):
@@ -410,13 +452,54 @@ def member(cookie, call_func):
         return "302"
 
 
-@route(r"/shopcar\.html")
-def shopcar():
-    # 1. 获取对应的html模板
-    with mini_open("/shopcar.html") as f:
-        content = f.read()
+@route(r"/member_now\.html")
+def member_now(post, oookie, call_func):
+    cookie = oookie.split("'")
+    cookie = cookie[1]
+    print("==============")
+    print(post)
+    # 获取用户信息
+    print("==============")
+    # 提取用户出来的资料
+    new_password = unquote(post['user_name'])
+    print(new_password)
+    user_id = unquote(post['user_id'])  # 身份证id
+    # yinghan_name = unquote(post['user_yinghan'])  # 对应uid
+    yinghan_num = unquote(post['yinghan_num'])  # 对应bank
+    email = unquote(post['emali'])  # 邮箱
+    print(email)
+    address = unquote(post['address'])  # 地址
+    db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
 
-    return content
+    cursor = db.cursor()
+    # 检测是用户名是否存在
+    sql = """select * from user_info where name=%s"""
+    cursor.execute(sql, new_password)
+    if cursor.fetchone():
+        cursor.close()
+        db.close()
+        # 存在直接返回 不写入到数据库
+        return "0"
+    # sql_user = "select * from user_info;"  # 查询一下
+    # sql_user_table = cursor.execute(sql_user)
+    # print("==============")
+    # print(sql_user_table)
+    # print("==============")
+
+    # sqls = """update user_info inner join info on focus.info_id=info.id set focus.note_info=%s where info.code=%s;"""
+    db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+    # 修改
+    sql = "update user_info set name=%s,pid=%s,email=%s,adds=%s where uid=%s;"
+    cursor.execute(sql, [new_password, user_id, email, address, cookie])
+    # db.commit()   # 提交
+    cursor.close()
+    db.close()
+    return "用户修改数据成功"
+
+
+
 
 
 @route(r"/reg\.html")
@@ -444,7 +527,7 @@ def reg_now(pots, cookie, call_func):
     password = pots["password"]
     password = unquote(password)
     # 连接数据库
-    db = pymysql.connect(host='localhost', port=3306, user='root', password='201314', database='shop',
+    db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
                          charset='utf8')
     # 获取指针
     cursor = db.cursor()
@@ -635,17 +718,17 @@ def pwd_ok(pots, cookie, call_func):
 
 
 @route(r"/product_show\.html")
-def product_show(pots, cookie, call_func):
+def product_show(post, cookie, call_func):
     """
     :param cookie: cookie记录登录状态和用户信息
     :param call_func: 回调状态函数
     :return:
     """
-    print(pots)
+    print(post)
     if cookie:
         cookie = cookie.split("'")
         cookie = cookie[1]
-        pots = pots["id"]
+        post = post["id"]
         # 1. 获取对应的html模板
         db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
                              charset='utf8')
@@ -655,7 +738,7 @@ def product_show(pots, cookie, call_func):
         name = cursor.fetchone()
         # 这里是 第一个pic的模板
         sql = """select * from commoditys where id=%s;"""
-        cursor.execute(sql,pots)  # 为了避免SQL注入，此时用MySQL自带的功能参数化
+        cursor.execute(sql, post)  # 为了避免SQL注入，此时用MySQL自带的功能参数化
         pic_info = cursor.fetchall()
         print(pic_info)
 
@@ -674,6 +757,8 @@ def product_show(pots, cookie, call_func):
             # 渲染商品价格
             price = str(pic_info[0][2])
             content = re.sub(r"\{% price %\}", price, content)
+            content = re.sub(r"\{% cid %\}", str(pic_info[0][0]), content)
+
             sql = """select user_info.name from user_info inner join cookie on user_info.uid=cookie.uid where cookie.cookie=%s;"""
             cursor.execute(sql, [cookie])  # 为了避免SQL注入，此时用MySQL自带的功能参数化
             name = cursor.fetchone()
@@ -703,15 +788,29 @@ def product_show(pots, cookie, call_func):
                 left += left_temp.format(info)
             content = re.sub(r"\{% left %\}", left, content)
 
-
         cursor.close()
         db.close()
         return content
     else:
         redirect(call_func)
         return "302"
-
-
+@route(r"/addcar\.html")
+def addcar(post, cookie, call_func):
+    cookie = cookie.split("'")
+    cookie = cookie[1]
+    cid = post["cid"]
+    uid = cookie
+    db = pymysql.connect(host=DATABASE, port=3306, user='root', password='201314', database='shop',
+                         charset='utf8')
+    cursor = db.cursor()
+    # 添加到数据库
+    sql = "insert into shopcar values(0,%s,%s);"
+    # 执行sql语句
+    cursor.execute(sql, [uid,cid])
+    db.commit()
+    cursor.close()
+    db.close()
+    return "ok"
 
 
 def application(env, call_func):
@@ -742,10 +841,10 @@ def application(env, call_func):
                 break
 
             elif env["MODE"] == "POST":
-                pots = env["POST"]
+                post = env["POST"]
                 # 这是POTS请求 传入POST传入的信息
                 cookie = env.get("COOKIE", None)
-                response_body = func(pots, cookie, call_func)
+                response_body = func(post, cookie, call_func)
                 break
 
     else:
