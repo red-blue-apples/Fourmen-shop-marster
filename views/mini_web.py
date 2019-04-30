@@ -1,3 +1,4 @@
+import random
 import re
 import time
 import pymysql
@@ -185,8 +186,11 @@ def payply(cookie, call_func):
 
 @route("404")
 def page_404():
-    return "404，当前时间是：%s" % time.ctime()
-
+    num = random.randint(1,2)
+    page = "/404%d.html"%num
+    with mini_open(page) as f:
+        content = f.read()
+    return content
 
 @route(r"/index\.html")
 def index(cookie, call_func):
