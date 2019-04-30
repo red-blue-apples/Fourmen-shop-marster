@@ -38,17 +38,6 @@
             change_money(input,num)
         })
     })
-
-    $(function(){
-        $("#change").children().text(function(){
-            var input = $(".sl-left").next('input');
-            var input2 = $(".sl-right").next('input');
-            var num1 = Number(input.val());
-            var num2 = Number(input2.val())
-            var nums = num1+num2;
-            return nums;
-        })
-    })
 	
 	function changePrice(obj,num){
         //修改金额
@@ -69,40 +58,13 @@
         var total = 0;
 		$(".mid-je").children("span").each(function(){
             var _num = parseInt($(this).html())
-            if("input[type='chekbox]:cheked"){
                 total+=_num;
                 //修改总价 
                 $(".jshj-p2").children("span").html(total);
-            }
 		})
         })
 		
     }
-
-	// 购物车全选
-	$(function () {
-		$('.check_all').on('click', function () {
-			if (this.checked) {
-                $("input[name='sub']").attr('checked', true);
-                
-			} else {
-				$("input[name='sub']").attr('checked', false);
-			}
-		});
-    });
-    
-    //增加
-    var num =1;
-    $('.add').click(function() {
-        num = $(this).siblings('input').val()
-        num++;
-        $(this).siblings('input').val(num);
-        //单个总价
-        var univalent = $(this).parent().siblings('.univalent').html();
-        // console.log(univalent);
-        $(this).parent().siblings('.total').html(univalent*num);
-        update();
-        });
 
     //删除
     $(function(){
@@ -120,21 +82,25 @@
         })
     })
 
-    // function change_money(obj,num){
-    //     if("input[type='checkbox']:checked".length<0){
-    //         $("#change").children().text("0")
-    //         $("#down").children().text("0")
-    //     }
-    // }
+    // 购物车全选
+	$(function () {
+		$('.check_all').on('click', function () {
+			if (this.checked) {
+                $("input[name='sub']").attr('checked', true);
+                
+			} else {
+				$("input[name='sub']").attr('checked', false);
+			}
+		});
+    });
     
-    //删除选中
-    $(function(){
-        $(".del_all").on("click", function(){
-            $(".delete").parent().parent().remove()
-            $("#change").children().text("0")
-            $("#down").children().text("0")
-        })
-    })
+    //删除被选中的
+    $('.del_all').click(function() {
+        if("input[name='sub']=true"){
+            $("input[name='sub']=true").parent().parent().remove();
+            // update;
+        }
+    });
 
 
 </script>
